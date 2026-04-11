@@ -1,0 +1,17 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+jupyter
+ipykernel
+requests
+python-dotenv
+fastapi
+uvicorn
+streamlit
+openai
+anthropic
+transformers
+torch
+pillow

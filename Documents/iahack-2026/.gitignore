@@ -1,0 +1,37 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+*.egg-info/
+dist/
+build/
+.ipynb_checkpoints/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node.js
+node_modules/
+dist/
+.next/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (optionnel — décommenter si nécessaire)
+# data/
