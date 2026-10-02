@@ -26,6 +26,9 @@ importers:
       '@secprep/labs':
         specifier: workspace:*
         version: link:../../packages/labs
+      '@secprep/packgen':
+        specifier: workspace:*
+        version: link:../../packages/packgen
       '@secprep/quiz':
         specifier: workspace:*
         version: link:../../packages/quiz
@@ -99,6 +102,9 @@ importers:
       '@secprep/loggen':
         specifier: workspace:*
         version: link:../loggen
+      '@secprep/packgen':
+        specifier: workspace:*
+        version: link:../packgen
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -133,6 +139,16 @@ importers:
         version: 2.1.9(@types/node@20.19.43)
 
   packages/loggen:
+    devDependencies:
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
+  packages/packgen:
+    dependencies:
+      '@secprep/loggen':
+        specifier: workspace:*
+        version: link:../loggen
     devDependencies:
       vitest:
         specifier: ^2.1.2

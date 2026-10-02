@@ -3,11 +3,11 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 7 — Terminal sandbox.**
-> 5 labos Linux guidés, executes dans un conteneur Docker **isole** (pas de
-> reseau, FS lecture seule, limites, non-root), valides automatiquement.
-> (Phases 1-6 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
-> loggen & SIEM.)
+> **Etat actuel : Phase 8 — Analyse de paquets.**
+> Visionneuse de paquets + 3 captures synthetiques reproductibles (balayage de
+> ports, tunnel DNS, televersement HTTP) avec verite terrain et exercices.
+> (Phases 1-7 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
+> loggen & SIEM, terminal sandbox.)
 
 ## Prerequis
 
@@ -166,6 +166,22 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 une fois). Sans Docker, l'editeur de labo s'affiche mais le terminal indique
 clairement « Docker indisponible » — jamais d'execution non isolee.
 
+## Analyse de paquets (Phase 8)
+
+- **`packages/packgen`** : generateur de **captures synthetiques** reproductibles
+  (graine) avec **verite terrain** + helpers purs (stats protocoles,
+  conversations, suivi de flux). 3 captures : **balayage de ports**, **tunnel /
+  exfiltration DNS**, **televersement de fichier en HTTP**. Donnees fictives
+  (RFC 1918 / 5737, domaines example.*).
+- **Visionneuse** (`/paquets`) : table de paquets, **filtre d'affichage**,
+  **detail par couche** (Ethernet / IP / TCP|UDP / DNS|HTTP), **suivi de flux**,
+  **statistiques** (protocoles, top conversations).
+- **Exercices** par capture (« quel hote scanne ? », « identifie le tunnel DNS »,
+  « retrouve le fichier televerse ») avec **validation cote serveur** (les
+  reponses ne sont jamais envoyees au client).
+- Import de vrais fichiers .pcap : prevu dans une iteration ulterieure (parseur
+  en bac a sable pour fichiers non fiables).
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -203,7 +219,8 @@ secprep/
 │  ├─ report-grader/  # Grilles + schemas Zod + appel IA (Coach/Correcteur)
 │  ├─ loggen/         # Journaux synthetiques reproductibles + verite terrain
 │  ├─ siem-query/     # Langage de recherche + moteur (SIEM)
-│  └─ labs/           # Labos guidés + validation automatique
+│  ├─ labs/           # Labos guidés + validation automatique
+│  └─ packgen/        # Captures de paquets synthetiques + verite terrain
 ├─ services/
 │  └─ sandbox/        # Orchestrateur de conteneur Docker isole (terminal)
 ├─ data/

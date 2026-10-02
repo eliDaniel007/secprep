@@ -305,6 +305,19 @@ model SessionSandbox {
   @@map("session_sandbox")
 }
 
+// Capture de paquets synthetique (Phase 8). Les paquets sont generes a la volee
+// depuis la graine ; seules les metadonnees + verite terrain sont stockees.
+model Capture {
+  slug          String   @id
+  titre         String
+  description   String   @default("")
+  graine        String
+  veriteTerrain String   @default("{}") // JSON (inclut les exercices + reponses)
+  creeLe        DateTime @default(now())
+
+  @@map("capture")
+}
+
 model ProgressionLabo {
   id            String    @id @default(cuid())
   utilisateurId String

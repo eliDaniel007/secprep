@@ -1,5 +1,6 @@
 import { prisma } from "@secprep/db";
 import { genererScenario } from "@secprep/loggen";
+import { SCENARIOS as CAPTURES, genererCapture } from "@secprep/packgen";
 import { chargerBanque, chargerScenarios } from "../loader";
 import { validerBanque } from "../validator";
 import { versRow } from "../mapper";
@@ -109,6 +110,27 @@ async function main(): Promise<void> {
   } else {
     console.log(`SIEM : jeu "${jeuGen.slug}" deja present (${nbEv} evenements).`);
   }
+
+  // Captures de paquets (Phase 8) — metadonnees + verite terrain (paquets
+  // regeneres a la volee depuis la graine).
+  const GRAINE_PCAP = "secprep-2026";
+  let cCrees = 0;
+  let cMajs = 0;
+  for (const slug of Object.keys(CAPTURES)) {
+    const cap = genererCapture(slug, { graine: GRAINE_PCAP });
+    const existe = await prisma.capture.findUnique({ where: { slug } });
+    const data = {
+      slug,
+      titre: cap.titre,
+      description: cap.verite.description,
+      graine: GRAINE_PCAP,
+      veriteTerrain: JSON.stringify(cap.verite),
+    };
+    await prisma.capture.upsert({ where: { slug }, create: data, update: data });
+    if (existe) cMajs++;
+    else cCrees++;
+  }
+  console.log(`Captures : ${cCrees} creee(s), ${cMajs} mise(s) a jour.`);
 
   await prisma.$disconnect();
 }
