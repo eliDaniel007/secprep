@@ -9,6 +9,7 @@ const LIENS = [
   { href: "/examen", label: "Examen" },
   { href: "/duel", label: "Duel" },
   { href: "/siem", label: "SIEM" },
+  { href: "/labs", label: "Labos" },
   { href: "/rapports", label: "Rapports" },
 ];
 

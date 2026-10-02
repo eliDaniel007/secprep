@@ -23,12 +23,18 @@ importers:
       '@secprep/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@secprep/labs':
+        specifier: workspace:*
+        version: link:../../packages/labs
       '@secprep/quiz':
         specifier: workspace:*
         version: link:../../packages/quiz
       '@secprep/report-grader':
         specifier: workspace:*
         version: link:../../packages/report-grader
+      '@secprep/sandbox':
+        specifier: workspace:*
+        version: link:../../services/sandbox
       '@secprep/siem-query':
         specifier: workspace:*
         version: link:../../packages/siem-query
@@ -120,6 +126,12 @@ importers:
         specifier: ^5.20.0
         version: 5.22.0
 
+  packages/labs:
+    devDependencies:
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
   packages/loggen:
     devDependencies:
       vitest:
@@ -150,6 +162,12 @@ importers:
         version: 2.1.9(@types/node@20.19.43)
 
   packages/siem-query:
+    devDependencies:
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
+  services/sandbox:
     devDependencies:
       vitest:
         specifier: ^2.1.2

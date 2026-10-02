@@ -8,6 +8,8 @@ const nextConfig = {
     "@secprep/quiz",
     "@secprep/report-grader",
     "@secprep/siem-query",
+    "@secprep/labs",
+    "@secprep/sandbox",
   ],
   experimental: {
     // Modules serveur natifs / lourds a ne pas bundler cote client.

@@ -3,10 +3,11 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 6 — Generateur de journaux & SIEM simule.**
-> Journaux synthetiques reproductibles (verite terrain), moteur de recherche,
-> tableaux de bord, regles de detection, enquete -> brouillon de rapport.
-> (Phases 1-5 : fondations, quiz, chrono/examen, revision & duel, rapports + IA.)
+> **Etat actuel : Phase 7 — Terminal sandbox.**
+> 5 labos Linux guidés, executes dans un conteneur Docker **isole** (pas de
+> reseau, FS lecture seule, limites, non-root), valides automatiquement.
+> (Phases 1-6 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
+> loggen & SIEM.)
 
 ## Prerequis
 
@@ -146,6 +147,25 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
   genere un brouillon de rapport. Evenements marques « simule » (vs « reel »,
   capteur en Phase 9).
 
+## Terminal sandbox (Phase 7)
+
+- **`packages/labs`** : 5 labos guidés (permissions `chmod`, `grep`, `find`,
+  `awk`, pipeline top-IP), chacun avec consigne, indice et **validation
+  automatique** (predicat pur sur la sortie d'une commande de verification).
+- **`services/sandbox`** : orchestrateur de conteneur **Docker** ephemere, un par
+  session. **Isolation stricte (non negociable)** :
+  `--network none`, `--read-only` (sauf `/work` en tmpfs), `--memory`/`--cpus`/
+  `--pids-limit`, `--user 1000:1000`, `--cap-drop ALL`, `no-new-privileges`,
+  conteneur detruit a la fin. Aucune commande utilisateur n'est jamais executee
+  hors du conteneur.
+- **UI `/labs`** : liste + progression ; page de labo avec consigne, **terminal**
+  (commande par commande, historique ↑/↓), indice et **Valider** (verification
+  dans le bac a sable).
+
+**Prerequis** : **Docker Desktop doit etre demarre** (image `alpine:3.19`, tiree
+une fois). Sans Docker, l'editeur de labo s'affiche mais le terminal indique
+clairement « Docker indisponible » — jamais d'execution non isolee.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -182,7 +202,10 @@ secprep/
 │  ├─ quiz/           # Correcteurs (10 types) + bareme + examen + SM-2
 │  ├─ report-grader/  # Grilles + schemas Zod + appel IA (Coach/Correcteur)
 │  ├─ loggen/         # Journaux synthetiques reproductibles + verite terrain
-│  └─ siem-query/     # Langage de recherche + moteur (SIEM)
+│  ├─ siem-query/     # Langage de recherche + moteur (SIEM)
+│  └─ labs/           # Labos guidés + validation automatique
+├─ services/
+│  └─ sandbox/        # Orchestrateur de conteneur Docker isole (terminal)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

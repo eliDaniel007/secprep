@@ -32,6 +32,8 @@ model Utilisateur {
   participations DuelParticipation[]
   rapports     Rapport[]
   enquetes     Enquete[]
+  sessionsSandbox SessionSandbox[]
+  progressionsLabo ProgressionLabo[]
 
   @@map("utilisateur")
 }
@@ -287,4 +289,31 @@ model Enquete {
 
   @@index([utilisateurId])
   @@map("enquete")
+}
+
+// Session de bac a sable (terminal, Phase 7). Mappe un jeton a un conteneur.
+model SessionSandbox {
+  id            String   @id @default(cuid())
+  utilisateurId String
+  conteneur     String
+  laboSlug      String
+  creeLe        DateTime @default(now())
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@map("session_sandbox")
+}
+
+model ProgressionLabo {
+  id            String    @id @default(cuid())
+  utilisateurId String
+  laboSlug      String
+  termine       Boolean   @default(false)
+  termineLe     DateTime?
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, laboSlug])
+  @@map("progression_labo")
 }
