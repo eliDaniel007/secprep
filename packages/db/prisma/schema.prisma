@@ -34,6 +34,7 @@ model Utilisateur {
   enquetes     Enquete[]
   sessionsSandbox SessionSandbox[]
   progressionsLabo ProgressionLabo[]
+  capteurs        Capteur[]
 
   @@map("utilisateur")
 }
@@ -250,6 +251,7 @@ model JeuJournaux {
 
   evenements Evenement[]
   enquetes   Enquete[]
+  capteur    Capteur?
 
   @@map("jeu_journaux")
 }
@@ -316,6 +318,40 @@ model Capture {
   creeLe        DateTime @default(now())
 
   @@map("capture")
+}
+
+// Capteur local (Phase 9). Jeton haché au repos, revocable. Chaque capteur a son
+// propre jeu de journaux (origine "reel").
+model Capteur {
+  id            String    @id @default(cuid())
+  utilisateurId String
+  nom           String
+  tokenHash     String    @unique // sha256 du jeton (haut en entropie)
+  jeuId         String    @unique
+  actif         Boolean   @default(true)
+  creeLe        DateTime  @default(now())
+  revokeLe      DateTime?
+
+  utilisateur Utilisateur    @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  jeu         JeuJournaux    @relation(fields: [jeuId], references: [id], onDelete: Cascade)
+  audits      AuditCapteur[]
+
+  @@index([utilisateurId])
+  @@map("capteur")
+}
+
+// Journal d'audit de tout ce qu'un capteur fait (enregistrement, envoi, revocation).
+model AuditCapteur {
+  id        String   @id @default(cuid())
+  capteurId String
+  action    String // register | ingest | revoke
+  details   String   @default("")
+  creeLe    DateTime @default(now())
+
+  capteur Capteur @relation(fields: [capteurId], references: [id], onDelete: Cascade)
+
+  @@index([capteurId])
+  @@map("audit_capteur")
 }
 
 model ProgressionLabo {

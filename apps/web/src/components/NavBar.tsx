@@ -11,6 +11,7 @@ const LIENS = [
   { href: "/siem", label: "SIEM" },
   { href: "/paquets", label: "Paquets" },
   { href: "/labs", label: "Labos" },
+  { href: "/capteurs", label: "Capteurs" },
   { href: "/rapports", label: "Rapports" },
 ];
 

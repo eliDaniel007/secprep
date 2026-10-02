@@ -3,11 +3,12 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 8 — Analyse de paquets.**
-> Visionneuse de paquets + 3 captures synthetiques reproductibles (balayage de
-> ports, tunnel DNS, televersement HTTP) avec verite terrain et exercices.
-> (Phases 1-7 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
-> loggen & SIEM, terminal sandbox.)
+> **Etat actuel : Phase 9 — Capteur local.**
+> Agent local qui envoie de vrais journaux (origine `reel`) vers le SIEM, a cote
+> des scenarios synthetiques, avec consentement obligatoire, jeton hache,
+> minimisation des champs, limitation de debit et journal d'audit.
+> (Phases 1-8 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
+> loggen & SIEM, terminal sandbox, analyse de paquets.)
 
 ## Prerequis
 
@@ -182,6 +183,31 @@ clairement « Docker indisponible » — jamais d'execution non isolee.
 - Import de vrais fichiers .pcap : prevu dans une iteration ulterieure (parseur
   en bac a sable pour fichiers non fiables).
 
+## Capteur local (Phase 9)
+
+Un petit agent qui envoie de **vrais** journaux (origine `reel`) vers le SIEM,
+a cote des scenarios synthetiques (`simule`). **Confidentialite d'abord** :
+
+- **Consentement obligatoire** a l'enregistrement (`/capteurs`) : on confirme que
+  le reseau/la machine sont autorises. Chaque capteur a son **jeu de journaux
+  dedie**.
+- **Jeton** de 32 octets aleatoires, **affiche une seule fois**, **hache
+  (SHA-256) au repos** ; jamais stocke en clair. Revocation en un clic
+  (`/api/capteurs/[id]/revoke`).
+- **Ingestion** (`POST /api/ingest`, `Authorization: Bearer <jeton>`) :
+  **minimisation** stricte (liste blanche de metadonnees : IP, ports, user,
+  host, proto, result…), **jamais de charge utile** (`raw` tronque), lots
+  plafonnes (500 evts) et **limitation de debit** (20 lots/min/capteur).
+- **Journal d'audit** (`audit_capteur`) : enregistrement, envoi, revocation.
+- **`sensor/secprep_sensor.py`** : agent Python **zero dependance** (register
+  avec consentement, jeton chiffre au repos via HMAC-SHA256, lecture **passive**
+  et minimisante, export `.jsonl`, envoi HTTPS + plafond). `python
+  sensor/secprep_sensor.py --help`.
+
+> Les evenements d'un capteur apparaissent dans le SIEM marques **« reel »** et
+> alimentent la recherche, les tableaux de bord et le test de regles comme les
+> scenarios simules.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -223,6 +249,7 @@ secprep/
 │  └─ packgen/        # Captures de paquets synthetiques + verite terrain
 ├─ services/
 │  └─ sandbox/        # Orchestrateur de conteneur Docker isole (terminal)
+├─ sensor/            # Agent capteur local (Python, zero dependance)   (Phase 9)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)
