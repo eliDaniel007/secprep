@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@secprep/db";
 import { utilisateurCourant } from "@/lib/auth";
 import { corriger, correctionAbandon, type LigneQuestion } from "@/lib/questions";
+import { majRevision } from "@/lib/revision";
 
 const schema = z.object({
   questionId: z.string(),
@@ -73,6 +74,9 @@ export async function POST(req: Request) {
       },
     }),
   ]);
+
+  // Planification de la revision espacee (SM-2).
+  await majRevision(u.id, q.id, correction.correct, indiceUtilise);
 
   return NextResponse.json(correction);
 }

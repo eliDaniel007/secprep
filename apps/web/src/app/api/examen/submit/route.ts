@@ -4,6 +4,7 @@ import { prisma } from "@secprep/db";
 import { scoreExamen, examenReussi } from "@secprep/quiz";
 import { utilisateurCourant } from "@/lib/auth";
 import { corriger, correctionAbandon, type LigneQuestion } from "@/lib/questions";
+import { majRevision } from "@/lib/revision";
 
 const reponseSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("qcm"), index: z.number().int().nonnegative() }),
@@ -130,6 +131,11 @@ export async function POST(req: Request) {
       },
     }),
   ]);
+
+  // Planification SM-2 pour chaque question de l'examen.
+  for (const d of details) {
+    await majRevision(u.id, d.questionId, d.correct, false);
+  }
 
   return NextResponse.json({
     score,

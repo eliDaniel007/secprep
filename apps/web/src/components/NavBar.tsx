@@ -7,6 +7,7 @@ const LIENS = [
   { href: "/", label: "Tableau de bord" },
   { href: "/quiz", label: "Quiz libre" },
   { href: "/examen", label: "Examen" },
+  { href: "/duel", label: "Duel" },
 ];
 
 export function NavBar({ nom }: { nom: string }) {

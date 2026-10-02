@@ -4,6 +4,7 @@ import { prisma } from "@secprep/db";
 import { utilisateurCourant } from "@/lib/auth";
 import { melanger } from "@/lib/melange";
 import { versQuestionClient, type LigneQuestion } from "@/lib/questions";
+import { questionsDues } from "@/lib/revision";
 
 const TYPES = [
   "qcm",
@@ -24,6 +25,7 @@ const schema = z.object({
   nombre: z.number().int().min(1).max(90).optional(),
   ids: z.array(z.string()).optional(),
   types: z.array(z.enum(TYPES)).optional(),
+  revision: z.boolean().optional(),
 });
 
 const SELECT = {
@@ -48,13 +50,20 @@ export async function POST(req: Request) {
   if (!parse.success) {
     return NextResponse.json({ erreur: "Entree invalide." }, { status: 400 });
   }
-  const { domaine, difficulte, ids, types } = parse.data;
+  const { domaine, difficulte, ids, types, revision } = parse.data;
   const nombre = parse.data.nombre ?? 10;
+
+  // Mode revision : on tire parmi les questions dues (SM-2).
+  const idsRevision = revision ? await questionsDues(u.id) : null;
+  if (revision && (!idsRevision || idsRevision.length === 0)) {
+    return NextResponse.json({ questions: [] });
+  }
 
   const lignes = (await prisma.question.findMany({
     where: {
       statut: "valide",
       ...(types && types.length > 0 ? { type: { in: types } } : {}),
+      ...(idsRevision ? { id: { in: idsRevision } } : {}),
       ...(ids && ids.length > 0 ? { id: { in: ids } } : {}),
       ...(domaine ? { domaine } : {}),
       ...(difficulte ? { difficulte } : {}),
@@ -62,7 +71,9 @@ export async function POST(req: Request) {
     select: SELECT,
   })) as LigneQuestion[];
 
-  const choisies = melanger(lignes).slice(0, nombre);
+  // En revision, on propose toutes les questions dues ; sinon on plafonne.
+  const n = revision && idsRevision ? idsRevision.length : nombre;
+  const choisies = melanger(lignes).slice(0, n);
   const questions = choisies.map(versQuestionClient);
 
   return NextResponse.json({ questions });

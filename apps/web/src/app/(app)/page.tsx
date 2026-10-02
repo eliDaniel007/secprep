@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { exigerUtilisateur } from "@/lib/auth";
 import { tableauBord } from "@/lib/stats";
+import { nombreDues } from "@/lib/revision";
 import { DOMAINES } from "@/lib/domaines";
 
 function pct(x: number): string {
@@ -10,6 +11,7 @@ function pct(x: number): string {
 export default async function DashboardPage() {
   const u = await exigerUtilisateur();
   const tb = await tableauBord(u.id);
+  const dues = await nombreDues(u.id);
 
   return (
     <div className="space-y-8">
@@ -27,6 +29,9 @@ export default async function DashboardPage() {
           <Link href="/examen" className="btn-ghost">
             Examen blanc
           </Link>
+          <Link href="/duel" className="btn-ghost">
+            Duel
+          </Link>
           <Link
             href="/quiz/session?types=urgence&chrono=1&nombre=5"
             className="btn-ghost"
@@ -34,6 +39,23 @@ export default async function DashboardPage() {
             Mode urgence
           </Link>
         </div>
+      </div>
+
+      {/* Revision espacee */}
+      <div className="card flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="font-semibold">Revision espacee (SM-2)</h2>
+          <p className="mt-1 text-sm text-muted">
+            {dues > 0
+              ? `${dues} question(s) a reviser aujourd'hui.`
+              : "Rien a reviser pour le moment. Les questions ratees reviennent ici."}
+          </p>
+        </div>
+        {dues > 0 && (
+          <Link href="/quiz/session?revision=1" className="btn-brand">
+            Reviser ({dues})
+          </Link>
+        )}
       </div>
 
       {/* Cartes de synthese */}

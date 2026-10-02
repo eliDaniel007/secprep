@@ -12,6 +12,7 @@ export default function QuizSessionPage({
     ids?: string;
     types?: string;
     chrono?: string;
+    revision?: string;
   };
 }) {
   const domaine = searchParams.domaine ? Number(searchParams.domaine) : undefined;
@@ -22,6 +23,7 @@ export default function QuizSessionPage({
     ? (searchParams.types.split(",").filter(Boolean) as TypeQuestion[])
     : undefined;
   const chrono = searchParams.chrono === "1";
+  const revision = searchParams.revision === "1";
 
   return (
     <Suspense fallback={<p className="text-muted">Chargement…</p>}>
@@ -32,6 +34,7 @@ export default function QuizSessionPage({
         ids={ids}
         types={types}
         chrono={chrono}
+        revision={revision}
       />
     </Suspense>
   );

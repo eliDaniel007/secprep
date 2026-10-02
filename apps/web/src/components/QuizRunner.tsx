@@ -30,6 +30,7 @@ export function QuizRunner(props: {
   ids?: string[];
   types?: TypeQuestion[];
   chrono?: boolean;
+  revision?: boolean;
 }) {
   const router = useRouter();
   const [questions, setQuestions] = useState<QuestionClient[] | null>(null);
@@ -50,6 +51,7 @@ export function QuizRunner(props: {
             nombre: props.nombre,
             ids: props.ids,
             types: props.types,
+            revision: props.revision,
           }),
         });
         const data = await res.json();

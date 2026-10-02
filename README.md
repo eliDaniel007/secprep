@@ -3,10 +3,11 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 3 — Chrono & examen.**
-> Minuteries, mode urgence, simulateur d'examen (score 100–900, seuil 750),
-> correction des **10 types** de questions, cas complexes et plans de reprise.
-> (Phase 1 : fondations. Phase 2 : quiz, auth, tableau de bord.)
+> **Etat actuel : Phase 4 — Revision espacee & duel.**
+> Repetition espacee SM-2 sur les questions ratees, duel/cooperation en differe
+> entre les deux comptes.
+> (Phase 1 : fondations. Phase 2 : quiz, auth, tableau de bord.
+> Phase 3 : chrono, mode urgence, simulateur d'examen, 10 types.)
 
 ## Prerequis
 
@@ -84,6 +85,26 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 > La banque etant encore petite, l'examen utilise toutes les questions
 > disponibles (les generateurs arrivent en Phase 10).
 
+## Revision espacee & duel (Phase 4)
+
+### Revision espacee (SM-2)
+- Une question **entre dans la file quand elle est ratee** ; chaque passage met
+  a jour sa planification avec l'algorithme **SM-2** (facteur de facilite,
+  intervalle croissant).
+- Mapping qualite : correct sans indice = 5, avec indice = 4, rate = 2.
+- Une question ratee reste **due immediatement** (on peut la re-travailler le
+  jour meme) ; une reussite s'espace dans le temps.
+- Le tableau de bord affiche le nombre de questions a reviser et un mode
+  **Reviser** (`/quiz/session?revision=1`). Les examens alimentent aussi la file.
+
+### Duel / cooperation (en differe)
+- `/duel` : creer un defi (**duel** = comparaison, **coop** = score combine),
+  obtenir un **code** a partager, ou rejoindre un defi par code.
+- Les deux joueurs recoivent **exactement le meme jeu de questions** (fige a la
+  creation), jouent quand ils veulent, puis comparent/combinent leurs scores.
+- Correction a la fin (pas de feedback pendant, pour l'equite), une seule
+  participation par joueur et par defi.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -117,7 +138,7 @@ secprep/
 ├─ packages/
 │  ├─ db/             # Prisma : schema, client, migrations
 │  ├─ bank/           # Zod (source de verite), validate-bank, seed, create-user
-│  └─ quiz/           # Correcteurs (10 types) + bareme + logique d'examen
+│  └─ quiz/           # Correcteurs (10 types) + bareme + examen + SM-2
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

@@ -27,6 +27,9 @@ model Utilisateur {
   tentatives   Tentative[]
   progressions ProgressionDomaine[]
   examens      SessionExamen[]
+  revisions    RevisionEspacee[]
+  duelsCrees   Duel[]
+  participations DuelParticipation[]
 
   @@map("utilisateur")
 }
@@ -51,6 +54,7 @@ model Question {
   misAJourLe     DateTime @updatedAt
 
   tentatives Tentative[]
+  revisions  RevisionEspacee[]
 
   @@index([domaine])
   @@index([type])
@@ -109,4 +113,57 @@ model SessionExamen {
 
   @@index([utilisateurId])
   @@map("session_examen")
+}
+
+// Repetition espacee SM-2 (Phase 4).
+model RevisionEspacee {
+  id               String   @id @default(cuid())
+  utilisateurId    String
+  questionId       String
+  repetitions      Int      @default(0)
+  intervalleJours  Int      @default(0)
+  facilite         Float    @default(2.5)
+  prochaineRevision DateTime @default(now())
+  derniereRevision DateTime @default(now())
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, questionId])
+  @@index([utilisateurId, prochaineRevision])
+  @@map("revision_espacee")
+}
+
+// Duel / cooperation en differe (Phase 4).
+model Duel {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  createurId  String
+  mode        String   @default("duel") // duel | coop
+  questionIds String // JSON : liste figee d'ids (meme ordre pour les deux)
+  nombre      Int
+  creeLe      DateTime @default(now())
+
+  createur      Utilisateur         @relation(fields: [createurId], references: [id], onDelete: Cascade)
+  participations DuelParticipation[]
+
+  @@map("duel")
+}
+
+model DuelParticipation {
+  id            String   @id @default(cuid())
+  duelId        String
+  utilisateurId String
+  pointsGagnes  Int      @default(0)
+  pointsMax     Int      @default(0)
+  corrects      Int      @default(0)
+  total         Int      @default(0)
+  termineLe     DateTime @default(now())
+
+  duel        Duel        @relation(fields: [duelId], references: [id], onDelete: Cascade)
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@unique([duelId, utilisateurId])
+  @@index([duelId])
+  @@map("duel_participation")
 }
