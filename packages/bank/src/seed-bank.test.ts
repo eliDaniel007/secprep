@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { chargerDossier, DOSSIER_SEED } from "./loader.js";
-import { validerBanque } from "./validator.js";
-import { versRow } from "./mapper.js";
+import { chargerDossier, DOSSIER_SEED } from "./loader";
+import { validerBanque } from "./validator";
+import { versRow } from "./mapper";
 
 /** Verifie que le lot de depart fourni se charge sans erreur et se mappe. */
 describe("banque de depart (data/seed)", () => {

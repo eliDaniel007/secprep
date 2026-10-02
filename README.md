@@ -3,9 +3,10 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 1 — Fondations.**
-> Architecture monorepo, modele de donnees, chargement de la banque de
-> questions (`seed`), validation des lots (`validate-bank`), creation de comptes.
+> **Etat actuel : Phase 2 — Quiz.**
+> Interface web (Next.js), connexion, quiz libre, correction hors-ligne des
+> types `qcm` / `vf` / `libre`, tableau de bord de progression.
+> (Phase 1 : fondations, modele de donnees, `seed`, `validate-bank`, comptes.)
 
 ## Prerequis
 
@@ -24,9 +25,18 @@ npm install -g pnpm
 
 ```bash
 pnpm install
-cp .env.example .env     # puis ajustez si besoin
+cp .env.example .env     # puis renseignez SESSION_PASSWORD (>= 32 car.)
 pnpm db:generate         # genere le client Prisma
 pnpm db:push             # cree la base SQLite (dev.db)
+pnpm seed                # charge la banque de questions
+pnpm create-user         # cree votre compte
+pnpm --filter @secprep/web dev   # lance l'app sur http://localhost:3000
+```
+
+Generer un `SESSION_PASSWORD` :
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ## Commandes
@@ -39,6 +49,28 @@ pnpm db:push             # cree la base SQLite (dev.db)
 | `pnpm test` | Lance les tests Vitest. |
 | `pnpm db:generate` | Genere le client Prisma. |
 | `pnpm db:push` | Applique le schema a la base SQLite. |
+| `pnpm --filter @secprep/web dev` | Lance l'application web (http://localhost:3000). |
+| `pnpm --filter @secprep/web build` | Build de production de l'app web. |
+
+## Application web (Phase 2)
+
+- **Connexion** par cookie de session chiffre (iron-session + argon2).
+- **Tableau de bord** : progression par domaine, points faibles.
+- **Quiz libre** : choix domaine / difficulte / nombre de questions.
+- **Ecran de question** : indice (−50 % sur la question), validation,
+  explication + astuce, revelation de la bonne reponse.
+- **Resultats** : score, detail, « refaire les erreurs ».
+- Types geres : `qcm`, `vf`, `libre` (correction hors-ligne par mots-cles).
+
+> La correction se fait **uniquement cote serveur** : les bonnes reponses ne
+> sont jamais envoyees au navigateur avant la validation.
+
+### Bareme
+
+- Points de base : facile **10**, moyen **20**, difficile **30**.
+- Indice utilise : points **divises par deux** (bonne reponse).
+- `libre` : score proportionnel aux groupes de mots-cles trouves, reussite au
+  seuil (`seuil_reussite`).
 
 ### Creer vos comptes
 
@@ -61,11 +93,12 @@ Aucun mot de passe n'est jamais stocke en clair ni ecrit dans le code.
 ```
 secprep/
 ├─ apps/
-│  ├─ web/            # UI Next.js + Tailwind      (Phase 2+)
-│  └─ api/            # API + WebSocket            (Phase 2+)
+│  ├─ web/            # UI Next.js + Tailwind (auth, quiz, dashboard)
+│  └─ api/            # API + WebSocket            (Phase 4+)
 ├─ packages/
 │  ├─ db/             # Prisma : schema, client, migrations
-│  └─ bank/           # Zod (source de verite), validate-bank, seed, create-user
+│  ├─ bank/           # Zod (source de verite), validate-bank, seed, create-user
+│  └─ quiz/           # Correcteurs qcm/vf/libre + bareme (hors-ligne)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

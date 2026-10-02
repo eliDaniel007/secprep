@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Tokens de couleur (RGB, consommes par Tailwind avec <alpha-value>) ---- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Theme sombre par defaut (ardoise + teal) */
+  --bg: 15 23 42; /* slate-900 */
+  --surface: 30 41 59; /* slate-800 */
+  --surface-2: 51 65 85; /* slate-700 */
+  --border: 51 65 85;
+  --text: 241 245 249; /* slate-100 */
+  --muted: 148 163 184; /* slate-400 */
+  --brand: 45 212 191; /* teal-400 */
+  --brand-fg: 2 44 41; /* texte sur fond brand */
+  --ok: 52 211 153; /* emerald-400 */
+  --warn: 251 191 36; /* amber-400 */
+  --danger: 248 113 113; /* red-400 */
+}
+
+:root[data-theme="light"] {
+  --bg: 248 250 252;
+  --surface: 255 255 255;
+  --surface-2: 241 245 249;
+  --border: 226 232 240;
+  --text: 15 23 42;
+  --muted: 100 116 139;
+  --brand: 13 148 136; /* teal-600 */
+  --brand-fg: 255 255 255;
+  --ok: 5 150 105;
+  --warn: 217 119 6;
+  --danger: 220 38 38;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: 248 250 252;
+    --surface: 255 255 255;
+    --surface-2: 241 245 249;
+    --border: 226 232 240;
+    --text: 15 23 42;
+    --muted: 100 116 139;
+    --brand: 13 148 136;
+    --brand-fg: 255 255 255;
+    --ok: 5 150 105;
+    --warn: 217 119 6;
+    --danger: 220 38 38;
+  }
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Composants utilitaires ---- */
+@layer components {
+  .card {
+    @apply rounded-2xl border border-border bg-surface p-5 shadow-sm;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2
+           focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-brand {
+    @apply btn bg-brand text-brand-fg hover:brightness-110 active:brightness-95;
+  }
+  .btn-ghost {
+    @apply btn border border-border bg-surface-2 text-text hover:bg-surface;
+  }
+  .input {
+    @apply w-full rounded-xl border border-border bg-surface-2 px-3.5 py-2.5 text-text
+           placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/40;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-muted;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-muted;
+  }
+}

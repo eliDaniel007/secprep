@@ -16,8 +16,7 @@
     "test": "echo \"(pas de tests dans @secprep/db)\" && exit 0"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0",
-    "dotenv": "^16.4.5"
+    "@prisma/client": "^5.20.0"
   },
   "devDependencies": {
     "dotenv-cli": "^7.4.2",

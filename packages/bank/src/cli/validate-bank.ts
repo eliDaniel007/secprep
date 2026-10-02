@@ -1,6 +1,6 @@
-import { chargerBanque } from "../loader.js";
-import { validerBanque } from "../validator.js";
-import { afficherRapport } from "./rapport.js";
+import { chargerBanque } from "../loader";
+import { validerBanque } from "../validator";
+import { afficherRapport } from "./rapport";
 
 /** `pnpm run validate-bank` — valide seed/ + lots/ et sort en erreur si refus. */
 function main(): void {

@@ -1,4 +1,4 @@
-import type { Question } from "./schemas.js";
+import type { Question } from "./schemas";
 
 /** Ligne prete pour Prisma (modele Question). Le `contenu` specifique au
  *  type est serialise en JSON ; `tags` aussi. */

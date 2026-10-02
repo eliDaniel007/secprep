@@ -1,5 +1,5 @@
-import { questionSchema, bankFileSchema, type Question } from "./schemas.js";
-import { trouverDoublons, type PaireDoublon } from "./similarity.js";
+import { questionSchema, bankFileSchema, type Question } from "./schemas";
+import { trouverDoublons, type PaireDoublon } from "./similarity";
 
 export interface ProblemeValidation {
   fichier: string;

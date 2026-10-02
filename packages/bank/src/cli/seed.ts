@@ -1,8 +1,8 @@
 import { prisma } from "@secprep/db";
-import { chargerBanque } from "../loader.js";
-import { validerBanque } from "../validator.js";
-import { versRow } from "../mapper.js";
-import { afficherRapport } from "./rapport.js";
+import { chargerBanque } from "../loader";
+import { validerBanque } from "../validator";
+import { versRow } from "../mapper";
+import { afficherRapport } from "./rapport";
 
 /**
  * `pnpm run seed` — valide PUIS charge la banque en base.

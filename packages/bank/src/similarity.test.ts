@@ -3,7 +3,7 @@ import {
   normaliser,
   similariteEnonces,
   trouverDoublons,
-} from "./similarity.js";
+} from "./similarity";
 
 describe("normaliser", () => {
   it("retire accents, casse et ponctuation", () => {

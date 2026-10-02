@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { FichierBanque } from "./validator.js";
+import type { FichierBanque } from "./validator";
 
 // Racine du monorepo : packages/bank/src -> ../../..
 const ICI = fileURLToPath(new URL(".", import.meta.url));

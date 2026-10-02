@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validerBanque, type FichierBanque } from "./validator.js";
+import { validerBanque, type FichierBanque } from "./validator";
 
 /** Petit constructeur de question qcm valide. */
 function qcm(id: string, extra: Record<string, unknown> = {}) {

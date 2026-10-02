@@ -1,4 +1,4 @@
-import type { RapportValidation } from "../validator.js";
+import type { RapportValidation } from "../validator";
 
 /** Affiche un rapport de validation lisible dans le terminal. */
 export function afficherRapport(r: RapportValidation): void {
