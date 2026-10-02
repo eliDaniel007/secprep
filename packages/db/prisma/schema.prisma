@@ -26,6 +26,7 @@ model Utilisateur {
 
   tentatives   Tentative[]
   progressions ProgressionDomaine[]
+  examens      SessionExamen[]
 
   @@map("utilisateur")
 }
@@ -89,4 +90,23 @@ model ProgressionDomaine {
 
   @@unique([utilisateurId, domaine])
   @@map("progression_domaine")
+}
+
+// Simulateur d'examen (Phase 3).
+model SessionExamen {
+  id            String    @id @default(cuid())
+  utilisateurId String
+  debutLe       DateTime  @default(now())
+  finLe         DateTime?
+  dureeSec      Int       @default(0)
+  total         Int       @default(0)
+  corrects      Int       @default(0)
+  score         Int       @default(100) // echelle 100-900
+  reussi        Boolean   @default(false)
+  detail        String    @default("{}") // JSON : repartition par domaine, par question
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@map("session_examen")
 }

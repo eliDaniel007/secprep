@@ -23,6 +23,11 @@ export interface Resultat {
   pointsMax: number;
   /** Detail optionnel (pour la correction libre). */
   detail?: ResultatLibreDetail;
+  /** Pour appariement / ordonnancement : nombre d'elements corrects. */
+  bonsElements?: number;
+  totalElements?: number;
+  /** Pour cas_complexe : justesse de chaque etape, dans l'ordre. */
+  etapesCorrectes?: boolean[];
 }
 
 export interface ResultatLibreDetail {

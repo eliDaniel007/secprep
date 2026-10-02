@@ -20,9 +20,20 @@ export default async function DashboardPage() {
             Voici ta progression sur les 5 domaines du SY0-701.
           </p>
         </div>
-        <Link href="/quiz" className="btn-brand">
-          Demarrer un quiz
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/quiz" className="btn-brand">
+            Demarrer un quiz
+          </Link>
+          <Link href="/examen" className="btn-ghost">
+            Examen blanc
+          </Link>
+          <Link
+            href="/quiz/session?types=urgence&chrono=1&nombre=5"
+            className="btn-ghost"
+          >
+            Mode urgence
+          </Link>
+        </div>
       </div>
 
       {/* Cartes de synthese */}

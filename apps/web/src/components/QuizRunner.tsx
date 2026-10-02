@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DOMAINES, LIBELLE_TYPE } from "@/lib/domaines";
+import {
+  QuestionInputs,
+  answerInitial,
+  answerPrete,
+  answerVersReponse,
+  type Answer,
+} from "@/components/QuestionInputs";
 import type {
   Correction,
   Difficulte,
   QuestionClient,
-  ReponseUtilisateur,
+  TypeQuestion,
 } from "@/lib/quiz-api";
 
 interface ResultatItem {
@@ -21,6 +28,8 @@ export function QuizRunner(props: {
   difficulte?: Difficulte;
   nombre: number;
   ids?: string[];
+  types?: TypeQuestion[];
+  chrono?: boolean;
 }) {
   const router = useRouter();
   const [questions, setQuestions] = useState<QuestionClient[] | null>(null);
@@ -40,14 +49,12 @@ export function QuizRunner(props: {
             difficulte: props.difficulte,
             nombre: props.nombre,
             ids: props.ids,
+            types: props.types,
           }),
         });
         const data = await res.json();
         if (annule) return;
-        if (!res.ok) {
-          setErreur(data.erreur ?? "Erreur au demarrage.");
-          return;
-        }
+        if (!res.ok) return setErreur(data.erreur ?? "Erreur au demarrage.");
         setQuestions(data.questions);
       } catch {
         if (!annule) setErreur("Erreur reseau.");
@@ -69,11 +76,7 @@ export function QuizRunner(props: {
       </div>
     );
   }
-
-  if (!questions) {
-    return <p className="text-muted">Preparation des questions…</p>;
-  }
-
+  if (!questions) return <p className="text-muted">Preparation des questions…</p>;
   if (questions.length === 0) {
     return (
       <div className="card">
@@ -84,76 +87,55 @@ export function QuizRunner(props: {
       </div>
     );
   }
-
-  // Ecran de resultats.
   if (index >= questions.length) {
     return <Resultats resultats={resultats} router={router} />;
   }
 
   const q = questions[index]!;
-
-  function onCorrige(correction: Correction) {
-    setResultats((r) => [...r, { question: q, correction }]);
-  }
-
   return (
     <QuestionView
       key={q.id}
       question={q}
       numero={index + 1}
       total={questions.length}
-      onCorrige={onCorrige}
+      chrono={props.chrono ?? false}
+      onCorrige={(correction) => setResultats((r) => [...r, { question: q, correction }])}
       onSuivant={() => setIndex((i) => i + 1)}
     />
   );
 }
 
-/* ---------------- Une question ---------------- */
-
 function QuestionView({
   question,
   numero,
   total,
+  chrono,
   onCorrige,
   onSuivant,
 }: {
   question: QuestionClient;
   numero: number;
   total: number;
+  chrono: boolean;
   onCorrige: (c: Correction) => void;
   onSuivant: () => void;
 }) {
+  const [answer, setAnswer] = useState<Answer>(() => answerInitial(question));
   const [indiceVisible, setIndiceVisible] = useState(false);
-  const [choix, setChoix] = useState<number | null>(null);
-  const [vf, setVf] = useState<boolean | null>(null);
-  const [texte, setTexte] = useState("");
   const [correction, setCorrection] = useState<Correction | null>(null);
   const [envoi, setEnvoi] = useState(false);
+  const [reste, setReste] = useState(question.tempsSec);
+  const correctionRef = useRef<Correction | null>(null);
+  correctionRef.current = correction;
   const meta = DOMAINES[question.domaine]!;
 
-  const peutValider =
-    correction === null &&
-    ((question.type === "qcm" && choix !== null) ||
-      (question.type === "vf" && vf !== null) ||
-      (question.type === "libre" && texte.trim().length > 0));
-
-  async function valider() {
-    if (!peutValider) return;
-    let reponse: ReponseUtilisateur;
-    if (question.type === "qcm") reponse = { type: "qcm", index: choix! };
-    else if (question.type === "vf") reponse = { type: "vf", valeur: vf! };
-    else reponse = { type: "libre", texte };
-
+  async function envoyer(body: Record<string, unknown>) {
     setEnvoi(true);
     try {
       const res = await fetch("/api/quiz/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          questionId: question.id,
-          reponse,
-          indiceUtilise: indiceVisible,
-        }),
+        body: JSON.stringify(body),
       });
       const data: Correction = await res.json();
       if (res.ok) {
@@ -165,14 +147,33 @@ function QuestionView({
     }
   }
 
+  async function valider() {
+    const reponse = answerVersReponse(question, answer);
+    if (!reponse) return;
+    await envoyer({ questionId: question.id, reponse, indiceUtilise: indiceVisible });
+  }
+
+  useEffect(() => {
+    if (!chrono || correction !== null) return;
+    if (reste <= 0) {
+      if (correctionRef.current === null) {
+        void envoyer({ questionId: question.id, indiceUtilise: indiceVisible, abandon: true });
+      }
+      return;
+    }
+    const id = setTimeout(() => setReste((r) => r - 1), 1000);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reste, chrono, correction]);
+
+  const presqueFini = chrono && reste <= 10;
+  const peutValider = correction === null && answerPrete(answer);
+
   return (
     <div className="space-y-5">
-      {/* Progression */}
       <div>
         <div className="mb-2 flex items-center justify-between text-sm text-muted">
-          <span>
-            Question {numero} / {total}
-          </span>
+          <span>Question {numero} / {total}</span>
           <span className="flex items-center gap-2">
             <span className="chip">D{question.domaine}</span>
             <span className="chip">{LIBELLE_TYPE[question.type]}</span>
@@ -180,84 +181,36 @@ function QuestionView({
           </span>
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
-          <div
-            className="h-full bg-brand transition-all"
-            style={{ width: `${(numero / total) * 100}%` }}
-          />
+          <div className="h-full bg-brand transition-all" style={{ width: `${(numero / total) * 100}%` }} />
         </div>
       </div>
+
+      {chrono && correction === null && (
+        <div
+          className={`flex items-center justify-between rounded-xl border px-4 py-2 text-sm font-semibold ${
+            presqueFini ? "border-danger/50 bg-danger/10 text-danger" : "border-border bg-surface-2 text-muted"
+          }`}
+        >
+          <span>⏱ Temps restant</span>
+          <span>{reste}s</span>
+        </div>
+      )}
 
       <div className="card space-y-5">
         <h2 className="text-lg font-semibold leading-snug">{question.enonce}</h2>
 
-        {/* Saisie selon le type */}
-        {question.type === "qcm" && (
-          <div className="space-y-2">
-            {question.options!.map((opt, i) => (
-              <OptionChoix
-                key={i}
-                label={opt}
-                selectionne={choix === i}
-                etat={
-                  correction
-                    ? i === correction.bonneReponseQcm
-                      ? "bon"
-                      : choix === i
-                        ? "mauvais"
-                        : "neutre"
-                    : "neutre"
-                }
-                disabled={correction !== null}
-                onClick={() => setChoix(i)}
-              />
-            ))}
-          </div>
-        )}
+        <QuestionInputs
+          question={question}
+          value={answer}
+          onChange={setAnswer}
+          correction={correction}
+        />
 
-        {question.type === "vf" && (
-          <div className="flex gap-3">
-            {[
-              { v: true, l: "Vrai" },
-              { v: false, l: "Faux" },
-            ].map(({ v, l }) => (
-              <OptionChoix
-                key={l}
-                label={l}
-                selectionne={vf === v}
-                etat={
-                  correction
-                    ? correction.bonneReponseVf === v
-                      ? "bon"
-                      : vf === v
-                        ? "mauvais"
-                        : "neutre"
-                    : "neutre"
-                }
-                disabled={correction !== null}
-                onClick={() => setVf(v)}
-                className="flex-1"
-              />
-            ))}
-          </div>
-        )}
-
-        {question.type === "libre" && (
-          <textarea
-            className="input min-h-32 resize-y"
-            placeholder="Redige ta reponse…"
-            value={texte}
-            onChange={(e) => setTexte(e.target.value)}
-            disabled={correction !== null}
-          />
-        )}
-
-        {/* Indice */}
         {question.indice && correction === null && (
           <div>
             {indiceVisible ? (
               <p className="rounded-xl border border-warn/40 bg-warn/10 px-3 py-2 text-sm">
-                💡 {question.indice}{" "}
-                <span className="text-muted">(−50 % sur cette question)</span>
+                💡 {question.indice} <span className="text-muted">(−50 % sur cette question)</span>
               </p>
             ) : (
               <button
@@ -270,13 +223,8 @@ function QuestionView({
           </div>
         )}
 
-        {/* Action */}
         {correction === null ? (
-          <button
-            onClick={valider}
-            disabled={!peutValider || envoi}
-            className="btn-brand w-full"
-          >
+          <button onClick={valider} disabled={!peutValider || envoi} className="btn-brand w-full">
             {envoi ? "Correction…" : "Valider"}
           </button>
         ) : (
@@ -290,49 +238,12 @@ function QuestionView({
         </button>
       )}
 
-      <p className="text-center text-xs text-muted">
-        {meta.long} · objectif SY0-701
-      </p>
+      <p className="text-center text-xs text-muted">{meta.long} · objectif SY0-701</p>
     </div>
   );
 }
 
-function OptionChoix({
-  label,
-  selectionne,
-  etat,
-  disabled,
-  onClick,
-  className = "",
-}: {
-  label: string;
-  selectionne: boolean;
-  etat: "neutre" | "bon" | "mauvais";
-  disabled: boolean;
-  onClick: () => void;
-  className?: string;
-}) {
-  const styleEtat =
-    etat === "bon"
-      ? "border-ok bg-ok/15"
-      : etat === "mauvais"
-        ? "border-danger bg-danger/15"
-        : selectionne
-          ? "border-brand bg-brand/15"
-          : "border-border bg-surface-2 hover:border-muted";
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition disabled:cursor-default ${styleEtat} ${className}`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function FeedbackCorrection({
+export function FeedbackCorrection({
   correction,
   type,
 }: {
@@ -343,39 +254,36 @@ function FeedbackCorrection({
     <div className="space-y-3">
       <div
         className={`rounded-xl border px-4 py-3 ${
-          correction.correct
-            ? "border-ok/40 bg-ok/10 text-ok"
-            : "border-danger/40 bg-danger/10 text-danger"
+          correction.correct ? "border-ok/40 bg-ok/10 text-ok" : "border-danger/40 bg-danger/10 text-danger"
         }`}
       >
         <div className="flex items-center justify-between font-semibold">
           <span>{correction.correct ? "✓ Correct" : "✗ A revoir"}</span>
-          <span>
-            +{correction.pointsGagnes} / {correction.pointsMax} pts
-          </span>
+          <span>+{correction.pointsGagnes} / {correction.pointsMax} pts</span>
         </div>
+        {correction.totalElements != null && (
+          <p className="mt-1 text-sm">
+            {correction.bonsElements} / {correction.totalElements} elements corrects
+          </p>
+        )}
       </div>
 
       {type === "libre" && correction.detailLibre && (
         <div className="rounded-xl border border-border bg-surface-2 p-3 text-sm">
           <p className="font-medium">
-            {correction.detailLibre.groupesTrouves} /{" "}
-            {correction.detailLibre.groupesTotal} notions clefs trouvees
+            {correction.detailLibre.groupesTrouves} / {correction.detailLibre.groupesTotal} notions clefs trouvees
           </p>
-          {correction.detailLibre.groupesManques.length > 0 &&
-            correction.motsClesLibre && (
-              <p className="mt-1 text-muted">
-                Manquait :{" "}
-                {correction.detailLibre.groupesManques
-                  .map((i) => correction.motsClesLibre![i]![0])
-                  .join(", ")}
-              </p>
-            )}
+          {correction.detailLibre.groupesManques.length > 0 && correction.motsClesLibre && (
+            <p className="mt-1 text-muted">
+              Manquait :{" "}
+              {correction.detailLibre.groupesManques
+                .map((i) => correction.motsClesLibre![i]![0])
+                .join(", ")}
+            </p>
+          )}
           {correction.modeleLibre && (
             <details className="mt-2">
-              <summary className="cursor-pointer text-brand">
-                Voir la reponse modele
-              </summary>
+              <summary className="cursor-pointer text-brand">Voir la reponse modele</summary>
               <p className="mt-1 text-text">{correction.modeleLibre}</p>
             </details>
           )}
@@ -397,8 +305,6 @@ function FeedbackCorrection({
     </div>
   );
 }
-
-/* ---------------- Resultats ---------------- */
 
 function Resultats({
   resultats,
@@ -436,16 +342,12 @@ function Resultats({
             className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-sm"
           >
             <span className="flex items-center gap-2">
-              <span
-                className={r.correction.correct ? "text-ok" : "text-danger"}
-              >
+              <span className={r.correction.correct ? "text-ok" : "text-danger"}>
                 {r.correction.correct ? "✓" : "✗"}
               </span>
               <span className="line-clamp-1">{r.question.enonce}</span>
             </span>
-            <span className="shrink-0 text-muted">
-              +{r.correction.pointsGagnes}
-            </span>
+            <span className="shrink-0 text-muted">+{r.correction.pointsGagnes}</span>
           </div>
         ))}
       </div>

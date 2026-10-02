@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 const LIENS = [
   { href: "/", label: "Tableau de bord" },
   { href: "/quiz", label: "Quiz libre" },
+  { href: "/examen", label: "Examen" },
 ];
 
 export function NavBar({ nom }: { nom: string }) {

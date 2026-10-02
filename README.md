@@ -3,10 +3,10 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 2 — Quiz.**
-> Interface web (Next.js), connexion, quiz libre, correction hors-ligne des
-> types `qcm` / `vf` / `libre`, tableau de bord de progression.
-> (Phase 1 : fondations, modele de donnees, `seed`, `validate-bank`, comptes.)
+> **Etat actuel : Phase 3 — Chrono & examen.**
+> Minuteries, mode urgence, simulateur d'examen (score 100–900, seuil 750),
+> correction des **10 types** de questions, cas complexes et plans de reprise.
+> (Phase 1 : fondations. Phase 2 : quiz, auth, tableau de bord.)
 
 ## Prerequis
 
@@ -65,6 +65,25 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 > La correction se fait **uniquement cote serveur** : les bonnes reponses ne
 > sont jamais envoyees au navigateur avant la validation.
 
+## Chrono & examen (Phase 3)
+
+- **Les 10 types** de questions s'affichent et se corrigent : `qcm`,
+  `qcm_multiple`, `vf`, `libre`, `scenario`, `urgence`, `plan_reprise`,
+  `ordonnancement`, `appariement`, `cas_complexe`.
+- **Minuterie par question** (option « Chronometre ») : temps ecoule = ratee,
+  avec revelation de la bonne reponse.
+- **Mode urgence** : questions `urgence` chronometrees (depuis le tableau de bord).
+- **Simulateur d'examen** (`/examen`) :
+  - questions **ponderees par domaine** (D1 12 % … D4 28 %) ;
+  - **minuterie globale** de 90 min, navigation libre, **marquage** pour
+    revision, **revue finale** avant soumission ;
+  - **score 100–900** (seuil **750**) + revue par domaine.
+
+> Le bareme 100–900 reel de CompTIA est secret : on utilise une approximation
+> lineaire assumee (`score = 100 + ratio × 800`).
+> La banque etant encore petite, l'examen utilise toutes les questions
+> disponibles (les generateurs arrivent en Phase 10).
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -98,7 +117,7 @@ secprep/
 ├─ packages/
 │  ├─ db/             # Prisma : schema, client, migrations
 │  ├─ bank/           # Zod (source de verite), validate-bank, seed, create-user
-│  └─ quiz/           # Correcteurs qcm/vf/libre + bareme (hors-ligne)
+│  └─ quiz/           # Correcteurs (10 types) + bareme + logique d'examen
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

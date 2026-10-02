@@ -11,12 +11,14 @@ export function QuizConfigForm({ defaultDomaine }: { defaultDomaine?: number }) 
   );
   const [difficulte, setDifficulte] = useState<string>("");
   const [nombre, setNombre] = useState<string>("10");
+  const [chrono, setChrono] = useState(false);
 
   function demarrer() {
     const p = new URLSearchParams();
     if (domaine) p.set("domaine", domaine);
     if (difficulte) p.set("difficulte", difficulte);
     p.set("nombre", nombre);
+    if (chrono) p.set("chrono", "1");
     router.push(`/quiz/session?${p.toString()}`);
   }
 
@@ -66,6 +68,18 @@ export function QuizConfigForm({ defaultDomaine }: { defaultDomaine?: number }) 
               {n}
             </ChoixBouton>
           ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="label">Minuterie</label>
+        <div className="flex flex-wrap gap-2">
+          <ChoixBouton actif={!chrono} onClick={() => setChrono(false)}>
+            Sans chrono
+          </ChoixBouton>
+          <ChoixBouton actif={chrono} onClick={() => setChrono(true)}>
+            Chronometre (temps ecoule = rate)
+          </ChoixBouton>
         </div>
       </div>
 
