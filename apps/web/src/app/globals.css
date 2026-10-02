@@ -88,3 +88,45 @@ body {
     @apply inline-flex items-center rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-muted;
   }
 }
+
+/* Apercu Markdown des rapports */
+.prose-secprep {
+  line-height: 1.6;
+}
+.prose-secprep h1 {
+  @apply mb-3 mt-1 text-2xl font-bold;
+}
+.prose-secprep h2 {
+  @apply mb-2 mt-5 border-b border-border pb-1 text-lg font-semibold;
+}
+.prose-secprep h3 {
+  @apply mb-1 mt-4 font-semibold;
+}
+.prose-secprep p {
+  @apply my-2;
+}
+.prose-secprep ul {
+  @apply my-2 list-inside list-disc space-y-1;
+}
+.prose-secprep ol {
+  @apply my-2 list-inside list-decimal space-y-1;
+}
+.prose-secprep code {
+  @apply rounded bg-surface-2 px-1 py-0.5 text-sm;
+}
+.prose-secprep pre {
+  @apply my-3 overflow-auto rounded-xl bg-surface-2 p-3 text-sm;
+}
+.prose-secprep a {
+  @apply text-brand underline;
+}
+.prose-secprep blockquote {
+  @apply my-2 border-l-2 border-border pl-3 text-muted;
+}
+.prose-secprep table {
+  @apply my-3 w-full border-collapse text-sm;
+}
+.prose-secprep th,
+.prose-secprep td {
+  @apply border border-border px-2 py-1 text-left;
+}

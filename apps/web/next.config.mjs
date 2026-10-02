@@ -2,10 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   // Les packages du monorepo sont du TypeScript source : Next doit les transpiler.
-  transpilePackages: ["@secprep/bank", "@secprep/db", "@secprep/quiz"],
+  transpilePackages: [
+    "@secprep/bank",
+    "@secprep/db",
+    "@secprep/quiz",
+    "@secprep/report-grader",
+  ],
   experimental: {
-    // @node-rs/argon2 et @prisma/client sont des modules serveur natifs.
-    serverComponentsExternalPackages: ["@node-rs/argon2", "@prisma/client"],
+    // Modules serveur natifs / lourds a ne pas bundler cote client.
+    serverComponentsExternalPackages: [
+      "@node-rs/argon2",
+      "@prisma/client",
+      "@anthropic-ai/sdk",
+    ],
   },
 };
 

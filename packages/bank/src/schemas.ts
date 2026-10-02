@@ -227,3 +227,26 @@ export const bankFileSchema = z.object({
 });
 
 export type BankFile = z.infer<typeof bankFileSchema>;
+
+/** Scenario de lab avec verite terrain (Phase 5). Format des fichiers
+ *  data/scenarios/*.json (snake_case). */
+export const scenarioSchema = z.object({
+  slug: z.string().min(1),
+  titre: z.string().min(1),
+  type: z.enum(["incident", "audit", "postmortem", "escalade"]),
+  contexte: z.string().min(1),
+  objectif_sy0701: z.string().optional(),
+  cours_google: z.number().int().min(1).max(9).optional(),
+  verite_terrain: z.object({
+    iocs: z.array(z.string()).optional().default([]),
+    chronologie: z.array(z.string()).optional().default([]),
+    bonnes_actions: z.array(z.string()).optional().default([]),
+    faits_attendus: z.array(z.string()).optional().default([]),
+  }),
+  modele_markdown: z.string().optional().default(""),
+});
+export type ScenarioLabSource = z.infer<typeof scenarioSchema>;
+
+export const scenarioFileSchema = z.object({
+  scenarios: z.array(scenarioSchema).default([]),
+});

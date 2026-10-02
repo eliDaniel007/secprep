@@ -3,11 +3,10 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 4 — Revision espacee & duel.**
-> Repetition espacee SM-2 sur les questions ratees, duel/cooperation en differe
-> entre les deux comptes.
-> (Phase 1 : fondations. Phase 2 : quiz, auth, tableau de bord.
-> Phase 3 : chrono, mode urgence, simulateur d'examen, 10 types.)
+> **Etat actuel : Phase 5 — Rapports + IA.**
+> Editeur Markdown avec versions, modes Coach/Correcteur (API Claude),
+> verite terrain par scenario, sortie JSON validee (Zod), garde-fous anti-injection.
+> (Phases 1-4 : fondations, quiz, chrono/examen, revision espacee & duel.)
 
 ## Prerequis
 
@@ -105,6 +104,28 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 - Correction a la fin (pas de feedback pendant, pour l'equite), une seule
   participation par joueur et par defi.
 
+## Rapports + IA (Phase 5)
+
+- **Editeur Markdown** (`/rapports`) avec apercu en direct, **enregistrement
+  automatique** et **historique des versions** (restauration).
+- **Modeles** : rapport d'incident, post-mortem, note d'escalade, audit ; ou
+  depuis un **scenario** avec **verite terrain** (IOC, chronologie, bonnes actions).
+- **Deux modes d'IA** (`packages/report-grader`, API Claude) :
+  - **Coach** : questions, elements manquants, pistes de methode, sans reecrire.
+  - **Correcteur** : note /20 par critere (exactitude, structure, clarte, preuves,
+    recommandations, ton) + note globale /100.
+- L'IA compare le rapport a la verite terrain et signale les **affirmations non
+  appuyees** par les faits.
+- **Sortie JSON validee par Zod** ; affichage en cartes.
+- **Securite** : cle API **cote serveur uniquement** (`ANTHROPIC_API_KEY`, jamais
+  dans le depot), **plafond d'appels/jour** (`MAX_CORRECTIONS_JOUR`, defaut 20),
+  et **garde-fou anti-injection** (le contenu du rapport/journaux est encapsule
+  comme donnee non fiable, jamais comme instruction).
+- Modele par defaut : `claude-opus-5-5` (configurable via `ANTHROPIC_MODEL`).
+
+> Sans `ANTHROPIC_API_KEY`, l'editeur et les versions fonctionnent ; l'analyse IA
+> affiche un message clair invitant a configurer la cle.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -138,7 +159,8 @@ secprep/
 ├─ packages/
 │  ├─ db/             # Prisma : schema, client, migrations
 │  ├─ bank/           # Zod (source de verite), validate-bank, seed, create-user
-│  └─ quiz/           # Correcteurs (10 types) + bareme + examen + SM-2
+│  ├─ quiz/           # Correcteurs (10 types) + bareme + examen + SM-2
+│  └─ report-grader/  # Grilles + schemas Zod + appel IA (Coach/Correcteur)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

@@ -1,0 +1,77 @@
+{
+  "scenarios": [
+    {
+      "slug": "ransomware-serveurs-fichiers",
+      "titre": "Rancongiciel sur les serveurs de fichiers",
+      "type": "incident",
+      "contexte": "14h03. Le SOC detecte un chiffrement massif de fichiers sur 3 serveurs de fichiers (FS01, FS02, FS03). Une note de rancon 'LISEZMOI_RESTORE.txt' apparait dans chaque dossier partage. Le trafic SMB (445/TCP) depuis FS01 vers d'autres serveurs augmente fortement. L'EDR a d'abord signale a 13h40 l'execution de PowerShell encode sur le poste d'un administrateur (WKS-ADMIN07), suivie de la creation d'un compte de service 'svc_backup2'. Les sauvegardes completes datent de 02h00 la nuit derniere.",
+      "objectif_sy0701": "4.8",
+      "cours_google": 6,
+      "verite_terrain": {
+        "iocs": [
+          "WKS-ADMIN07 : PowerShell encode (13h40)",
+          "Compte de service cree : svc_backup2",
+          "Fichier de rancon : LISEZMOI_RESTORE.txt",
+          "Propagation SMB 445/TCP depuis FS01",
+          "Serveurs touches : FS01, FS02, FS03"
+        ],
+        "chronologie": [
+          "13h40 execution PowerShell encode sur WKS-ADMIN07",
+          "13h50 creation du compte svc_backup2 (persistance)",
+          "14h03 chiffrement massif detecte sur FS01-03",
+          "14h05 hausse du trafic SMB sortant de FS01"
+        ],
+        "bonnes_actions": [
+          "Isoler du reseau les hotes touches (confinement) sans les formater",
+          "Preserver les preuves : image memoire et disque, chaine de possession",
+          "Desactiver le compte svc_backup2 et les sessions de WKS-ADMIN07",
+          "Bloquer la propagation SMB entre serveurs",
+          "Restaurer a partir d'une source saine apres eradication, pas sur les memes serveurs",
+          "Ne pas payer la rancon",
+          "Revue post-incident et lecons apprises"
+        ],
+        "faits_attendus": [
+          "Il s'agit d'un rancongiciel avec propagation laterale (mouvement lateral par SMB)",
+          "La RPO = perte depuis 02h00 (sauvegarde) soit ~12 h de donnees",
+          "Le confinement precede l'eradication et la recuperation"
+        ]
+      },
+      "modele_markdown": "# Rapport d'incident\n\n## Resume executif\n\n## Chronologie\n\n## Impact\n\n## Cause racine\n\n## Confinement\n\n## Eradication\n\n## Recuperation\n\n## Lecons apprises\n"
+    },
+    {
+      "slug": "injection-sql-portail-client",
+      "titre": "Injection SQL sur le portail client",
+      "type": "incident",
+      "contexte": "Les journaux du serveur web montrent, depuis l'IP 203.0.113.45 : GET /produit?id=1' OR '1'='1 -- (HTTP 200, 1843 octets) puis GET /produit?id=1 UNION SELECT login,mdp FROM utilisateurs-- (HTTP 200, 5120 octets). Le portail client est expose a Internet. Le compte applicatif de la base de donnees a des droits etendus. Aucun WAF n'est en place.",
+      "objectif_sy0701": "4.9",
+      "cours_google": 5,
+      "verite_terrain": {
+        "iocs": [
+          "IP attaquante : 203.0.113.45",
+          "Payloads : ' OR '1'='1 -- et UNION SELECT login,mdp FROM utilisateurs--",
+          "Reponses HTTP 200 de taille inhabituelle (5120 octets) = exfiltration probable"
+        ],
+        "chronologie": [
+          "Requete de test d'injection (OR 1=1)",
+          "Requete UNION SELECT ciblant la table utilisateurs",
+          "Reponse volumineuse suggerant une extraction de donnees"
+        ],
+        "bonnes_actions": [
+          "Bloquer l'IP 203.0.113.45",
+          "Determiner les donnees exposees (table utilisateurs)",
+          "Reinitialiser les mots de passe potentiellement compromis",
+          "Corriger le code avec des requetes parametrees (prepared statements)",
+          "Appliquer le moindre privilege au compte applicatif de la BD",
+          "Mettre en place un WAF",
+          "Conserver les journaux et evaluer l'obligation de notification selon la loi applicable"
+        ],
+        "faits_attendus": [
+          "Il s'agit d'une injection SQL avec exfiltration via UNION SELECT",
+          "Une reponse 200 apres injection n'est pas rassurante : l'attaque a probablement fonctionne",
+          "La defense principale est la requete parametree, pas seulement le filtrage d'entree"
+        ]
+      },
+      "modele_markdown": "# Rapport d'incident\n\n## Resume executif\n\n## Indicateurs de compromission (IOC)\n\n## Chronologie\n\n## Donnees potentiellement exposees\n\n## Confinement\n\n## Correction\n\n## Recommandations\n\n## Conformite / notification\n"
+    }
+  ]
+}

@@ -30,6 +30,7 @@ model Utilisateur {
   revisions    RevisionEspacee[]
   duelsCrees   Duel[]
   participations DuelParticipation[]
+  rapports     Rapport[]
 
   @@map("utilisateur")
 }
@@ -166,4 +167,69 @@ model DuelParticipation {
   @@unique([duelId, utilisateurId])
   @@index([duelId])
   @@map("duel_participation")
+}
+
+// Scenarios de lab avec verite terrain (Phase 5). Seed depuis data/scenarios/.
+model ScenarioLab {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  titre          String
+  type           String // incident | audit | postmortem | escalade
+  contexte       String // description du scenario (donnees du cas)
+  objectifSy0701 String?
+  coursGoogle    Int?
+  veriteTerrain  String // JSON : { iocs[], chronologie[], bonnesActions[], faitsAttendus[] }
+  modeleMarkdown String   @default("") // squelette de rapport propose
+  creeLe         DateTime @default(now())
+
+  rapports Rapport[]
+
+  @@map("scenario_lab")
+}
+
+// Rapport redige par un utilisateur (Phase 5).
+model Rapport {
+  id            String   @id @default(cuid())
+  utilisateurId String
+  scenarioId    String?
+  titre         String
+  modele        String   @default("incident") // type de modele utilise
+  contenu       String   @default("") // markdown courant
+  creeLe        DateTime @default(now())
+  misAJourLe    DateTime @updatedAt
+
+  utilisateur Utilisateur         @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  scenario    ScenarioLab?        @relation(fields: [scenarioId], references: [id], onDelete: SetNull)
+  versions    RapportVersion[]
+  corrections CorrectionRapport[]
+
+  @@index([utilisateurId])
+  @@map("rapport")
+}
+
+model RapportVersion {
+  id        String   @id @default(cuid())
+  rapportId String
+  contenu   String
+  creeLe    DateTime @default(now())
+
+  rapport Rapport @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+
+  @@index([rapportId])
+  @@map("rapport_version")
+}
+
+model CorrectionRapport {
+  id          String   @id @default(cuid())
+  rapportId   String
+  mode        String // coach | correcteur
+  resultat    String // JSON valide (Zod) renvoye par l'IA
+  noteGlobale Int? // /100 en mode correcteur
+  modele      String   @default("") // modele IA utilise
+  creeLe      DateTime @default(now())
+
+  rapport Rapport @relation(fields: [rapportId], references: [id], onDelete: Cascade)
+
+  @@index([rapportId])
+  @@map("correction_rapport")
 }
