@@ -3,12 +3,12 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 9 — Capteur local.**
-> Agent local qui envoie de vrais journaux (origine `reel`) vers le SIEM, a cote
-> des scenarios synthetiques, avec consentement obligatoire, jeton hache,
-> minimisation des champs, limitation de debit et journal d'audit.
-> (Phases 1-8 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
-> loggen & SIEM, terminal sandbox, analyse de paquets.)
+> **Etat actuel : Phase 10 — Generateurs de questions.**
+> Gabarits parametriques a reponse calculee (ALE, CIDR, CHMOD, RPO, ports),
+> seed des brouillons, et file de relecture admin (brouillon -> valide) avec
+> statistiques par question.
+> (Phases 1-9 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
+> loggen & SIEM, terminal sandbox, analyse de paquets, capteur local.)
 
 ## Prerequis
 
@@ -208,6 +208,32 @@ a cote des scenarios synthetiques (`simule`). **Confidentialite d'abord** :
 > alimentent la recherche, les tableaux de bord et le test de regles comme les
 > scenarios simules.
 
+## Generateurs de questions (Phase 10)
+
+- **`packages/generators`** : **gabarits** parametriques a **reponse calculee**
+  (logique pure, graine reproductible), au **format de la banque** (valides par
+  `questionSchema` de `@secprep/bank`) :
+  - **ALE** (perte annuelle attendue : `ALE = SLE x ARO`),
+  - **CIDR** (hotes utilisables : `2^(32-masque) - 2`),
+  - **CHMOD** (droits -> notation octale),
+  - **RPO** (perte de donnees vs RPO/RTO),
+  - **PORTS** (appariement protocole/port).
+- `genererLot(gabarit, graine, n)` produit N variantes uniques (ids
+  `G-<GAB>-<hash>`, dedup par id). Questions marquees `source: "genere"`,
+  `statut: "brouillon"`.
+- **Seed** : `pnpm seed:generes [N]` genere N variantes/gabarit (defaut 8) et les
+  ajoute en base (upsert par `id`, idempotent).
+- **File de relecture** (`/admin/relecture`, **admins uniquement**) : chaque
+  brouillon s'affiche (enonce, options, bonne reponse, explication) avec
+  **Valider** (passe `statut` a `valide`) ou **Rejeter** (supprime). Tant qu'une
+  question generee n'est pas validee, elle reste **hors quiz/examen**.
+- **Statistiques par question** (meme page) : nombre de tentatives, taux de
+  reussite et temps moyen, pour reperer les questions trop faciles/dures.
+
+> Garde-fou : la relecture ne touche qu'aux **brouillons generes** — jamais au
+> contenu officiel. Les questions generees n'entrent dans les quiz, examens et
+> duels **qu'apres validation humaine**.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -246,7 +272,8 @@ secprep/
 │  ├─ loggen/         # Journaux synthetiques reproductibles + verite terrain
 │  ├─ siem-query/     # Langage de recherche + moteur (SIEM)
 │  ├─ labs/           # Labos guidés + validation automatique
-│  └─ packgen/        # Captures de paquets synthetiques + verite terrain
+│  ├─ packgen/        # Captures de paquets synthetiques + verite terrain
+│  └─ generators/     # Gabarits de questions a reponse calculee          (Phase 10)
 ├─ services/
 │  └─ sandbox/        # Orchestrateur de conteneur Docker isole (terminal)
 ├─ sensor/            # Agent capteur local (Python, zero dependance)   (Phase 9)

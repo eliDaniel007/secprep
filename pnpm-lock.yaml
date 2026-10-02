@@ -132,6 +132,28 @@ importers:
         specifier: ^5.20.0
         version: 5.22.0
 
+  packages/generators:
+    dependencies:
+      '@secprep/bank':
+        specifier: workspace:*
+        version: link:../bank
+      '@secprep/db':
+        specifier: workspace:*
+        version: link:../db
+      '@secprep/loggen':
+        specifier: workspace:*
+        version: link:../loggen
+    devDependencies:
+      dotenv-cli:
+        specifier: ^7.4.2
+        version: 7.4.4
+      tsx:
+        specifier: ^4.19.1
+        version: 4.23.15
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
   packages/labs:
     devDependencies:
       vitest:

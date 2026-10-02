@@ -27,3 +27,10 @@ export async function exigerUtilisateur(): Promise<UtilisateurCourant> {
   if (!u) redirect("/login");
   return u;
 }
+
+/** Pages reservees aux admins : redirige vers / si non admin. */
+export async function exigerAdmin(): Promise<UtilisateurCourant> {
+  const u = await exigerUtilisateur();
+  if (u.role !== "admin") redirect("/");
+  return u;
+}
