@@ -1,0 +1,448 @@
+{
+  "meta": {
+    "nom": "Banque SecPrep - lot de depart",
+    "version": "1.0",
+    "langue": "fr",
+    "examen_cible": "CompTIA Security+ SY0-701",
+    "domaines": {
+      "1": "Concepts generaux de securite (12 %)",
+      "2": "Menaces, vulnerabilites et mitigations (22 %)",
+      "3": "Architecture de securite (18 %)",
+      "4": "Operations de securite (28 %)",
+      "5": "Gestion et supervision du programme de securite (20 %)"
+    },
+    "difficultes": ["facile", "moyen", "difficile"],
+    "types": ["qcm", "qcm_multiple", "vf", "libre", "scenario", "urgence", "plan_reprise", "ordonnancement", "appariement", "cas_complexe"],
+    "note_contenu": "Contenu original redige pour l'entrainement. Ne contient aucune question d'examen reelle."
+  },
+  "questions": [
+    {
+      "id": "Q001", "domaine": 1, "cours_google": 1, "type": "qcm", "difficulte": "facile", "temps_sec": 45,
+      "enonce": "Un administrateur calcule le hash SHA-256 d'un fichier avant et apres son transfert pour detecter toute modification. Quel pilier de la triade CIA est ainsi verifie ?",
+      "options": ["Confidentialite", "Integrite", "Disponibilite", "Non-repudiation"],
+      "reponse": 1,
+      "explication": "Un hash identique avant/apres prouve que le fichier n'a pas ete altere : c'est l'integrite.",
+      "indice": "Demande-toi : le fichier est-il reste identique ?",
+      "astuce": "Hash = integrite ; chiffrement = confidentialite ; redondance = disponibilite.",
+      "tags": ["CIA", "hachage"], "objectif_sy0701": "1.2"
+    },
+    {
+      "id": "Q002", "domaine": 1, "cours_google": 2, "type": "vf", "difficulte": "facile", "temps_sec": 20,
+      "enonce": "Un controle dissuasif (deterrent) empeche techniquement une intrusion de se produire.",
+      "reponse": false,
+      "explication": "Un controle dissuasif decourage l'attaquant (panneau, camera visible). Ce qui empeche est preventif.",
+      "indice": "Dissuader et empecher ne sont pas le meme verbe.",
+      "astuce": "Types : preventif, detectif, correctif, dissuasif, compensatoire, directif.",
+      "tags": ["controles"], "objectif_sy0701": "1.1"
+    },
+    {
+      "id": "Q003", "domaine": 1, "cours_google": 5, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Dans une architecture Zero Trust, quel element du plan de controle decide d'autoriser ou de refuser une demande d'acces ?",
+      "options": ["Policy Enforcement Point", "Policy Decision Point (moteur de politiques)", "Plan de donnees", "Serveur de rebond"],
+      "reponse": 1,
+      "explication": "Le PDP decide ; le PEP applique la decision. Le plan de donnees transporte le trafic.",
+      "indice": "Un point decide, un autre applique.",
+      "astuce": "PDP = Decide, PEP = Execute.",
+      "tags": ["zero trust"], "objectif_sy0701": "1.2"
+    },
+    {
+      "id": "Q004", "domaine": 2, "cours_google": 1, "type": "qcm", "difficulte": "facile", "temps_sec": 40,
+      "enonce": "Un employe recoit un appel d'une personne se disant du support informatique qui lui demande son mot de passe. De quel type d'attaque s'agit-il ?",
+      "options": ["Smishing", "Vishing", "Whaling", "Pharming"],
+      "reponse": 1,
+      "explication": "Le vishing est de l'hameconnage par appel vocal. Le smishing passe par SMS.",
+      "indice": "Voice phishing.",
+      "astuce": "V = voix, S = SMS, W = whale (cadres superieurs).",
+      "tags": ["ingenierie sociale"], "objectif_sy0701": "2.2"
+    },
+    {
+      "id": "Q005", "domaine": 2, "cours_google": 5, "type": "scenario", "difficulte": "moyen", "temps_sec": 90,
+      "enonce": "Vendredi 16 h 50. La comptable recoit un courriel apparemment du PDG (adresse pdg@entrepr1se.com, avec un 1 a la place du i) : « Urgent et confidentiel : achete 5 000 $ de cartes-cadeaux pour un client, je suis en reunion, ne m'appelle pas. » Quelle est la meilleure reaction ?",
+      "options": ["Acheter les cartes pour ne pas faire attendre le PDG", "Repondre au courriel pour demander des details", "Ne rien faire, verifier par un canal independant (appel au numero connu) et signaler au SOC", "Transferer le courriel a toute l'equipe pour avis"],
+      "reponse": 2,
+      "explication": "Indices d'une compromission de courriel d'affaires (BEC) : urgence, secret, domaine usurpe (typosquatting). Il faut verifier hors bande et signaler.",
+      "indice": "Regarde l'adresse de l'expediteur et la pression exercee.",
+      "astuce": "Urgence + secret + argent = on verifie hors bande.",
+      "tags": ["BEC", "typosquatting", "pretexting"], "objectif_sy0701": "2.2"
+    },
+    {
+      "id": "Q006", "domaine": 2, "cours_google": 3, "type": "qcm", "difficulte": "difficile", "temps_sec": 75,
+      "enonce": "Sur un reseau local, un attaquant envoie de fausses reponses ARP pour se faire passer pour la passerelle et intercepter le trafic. Quelle est l'attaque et quelle contre-mesure sur les commutateurs ?",
+      "options": ["On-path (MITM) par ARP poisoning - Dynamic ARP Inspection", "DNS poisoning - DNSSEC", "VLAN hopping - desactiver la negociation automatique des trunks", "MAC flooding - 802.1X"],
+      "reponse": 0,
+      "explication": "L'empoisonnement ARP permet une attaque on-path. Le Dynamic ARP Inspection valide les paquets ARP.",
+      "indice": "L'attaque cible la correspondance IP-MAC.",
+      "astuce": "ARP -> DAI ; DHCP -> DHCP snooping ; MAC flooding -> port security.",
+      "tags": ["reseau", "ARP", "on-path"], "objectif_sy0701": "2.4"
+    },
+    {
+      "id": "Q007", "domaine": 2, "cours_google": 5, "type": "vf", "difficulte": "moyen", "temps_sec": 25,
+      "enonce": "Les requetes parametrees (prepared statements) sont l'une des defenses les plus efficaces contre l'injection SQL.",
+      "reponse": true,
+      "explication": "Elles separent le code SQL des donnees, ce qui empeche l'interpretation d'une entree comme une commande.",
+      "indice": "Pense a la separation code/donnees.",
+      "astuce": "Validation d'entree + requetes parametrees + moindre privilege sur le compte BD.",
+      "tags": ["SQLi", "applications"], "objectif_sy0701": "2.3"
+    },
+    {
+      "id": "Q008", "domaine": 4, "cours_google": 6, "type": "urgence", "difficulte": "difficile", "temps_sec": 60,
+      "enonce": "ALERTE 14 h 03 : le SOC detecte un chiffrement massif de fichiers sur 3 serveurs de fichiers. Une note de rancon apparait et le trafic SMB vers d'autres serveurs augmente. Quel est le premier geste prioritaire ?",
+      "options": ["Payer la rancon pour aller vite", "Isoler du reseau les hotes touches (confinement) sans les formater", "Restaurer immediatement les sauvegardes sur les memes serveurs", "Formater les serveurs et reinstaller"],
+      "reponse": 1,
+      "explication": "On contient d'abord pour stopper la propagation, tout en preservant les preuves. Eradication et recuperation viennent ensuite.",
+      "indice": "Stoppe la propagation avant de reparer.",
+      "astuce": "Cycle IR : preparation, detection, confinement, eradication, recuperation, lecons apprises.",
+      "tags": ["ransomware", "reponse a incident"], "objectif_sy0701": "4.8"
+    },
+    {
+      "id": "Q009", "domaine": 4, "cours_google": 6, "type": "libre", "difficulte": "difficile", "temps_sec": 300,
+      "enonce": "Un serveur web public est soupconne d'etre compromis : processus inconnu et connexions sortantes vers une IP etrangere. Decris, dans l'ordre, la demarche de reponse a incident que tu appliquerais.",
+      "reponse": {
+        "modele": "Identifier et confirmer l'incident (journaux, EDR). Contenir en isolant le serveur du reseau tout en preservant les preuves (image memoire et disque, chaine de possession). Eradiquer la cause (supprimer le malware, corriger la vulnerabilite, changer les identifiants). Recuperer en reconstruisant a partir d'une source saine et en surveillant. Terminer par une revue post-incident et des lecons apprises, et mettre a jour les procedures.",
+        "mots_cles": [["identification", "detection", "confirmer"], ["confinement", "isoler", "contenir"], ["preuves", "forensique", "image memoire", "chaine de possession"], ["eradication", "supprimer", "nettoyer", "corriger"], ["recuperation", "restaurer", "reconstruire"], ["lecons apprises", "post-mortem", "retour d'experience", "revue"]],
+        "points": 10, "seuil_reussite": 6
+      },
+      "explication": "Une bonne reponse suit le cycle de reponse a incident et mentionne la preservation des preuves.",
+      "indice": "Six grandes phases, de la detection aux lecons apprises.",
+      "astuce": "Contenir AVANT d'eradiquer.",
+      "tags": ["reponse a incident", "forensique"], "objectif_sy0701": "4.8"
+    },
+    {
+      "id": "Q010", "domaine": 4, "cours_google": 6, "type": "plan_reprise", "difficulte": "moyen", "temps_sec": 90,
+      "enonce": "Les sauvegardes completes sont faites chaque nuit a 02 h 00. Une panne totale survient a 15 h 00 et seules les sauvegardes sont recuperables. Quelle perte de donnees maximale subit-on et a quelle notion la compare-t-on ?",
+      "options": ["13 heures de donnees, a comparer au RPO vise", "13 heures, c'est le RTO", "2 heures, c'est le MTTR", "24 heures, c'est le MTBF"],
+      "reponse": 0,
+      "explication": "De 02 h a 15 h = 13 h de donnees perdues. Le RPO est la perte maximale tolerable ; le RTO est le temps de remise en service.",
+      "indice": "RPO = point de recuperation, donc donnees.",
+      "astuce": "RPO = Perte de donnees ; RTO = Temps d'arret.",
+      "tags": ["RPO", "RTO", "sauvegarde"], "objectif_sy0701": "3.4"
+    },
+    {
+      "id": "Q011", "domaine": 3, "cours_google": 8, "type": "plan_reprise", "difficulte": "difficile", "temps_sec": 75,
+      "enonce": "Une banque exige un RTO de 30 minutes et un RPO proche de zero pour son systeme de paiement. Quelle strategie de site de releve convient le mieux ?",
+      "options": ["Site froid (cold site)", "Site tiede avec sauvegardes quotidiennes", "Site chaud (hot site) avec replication synchrone", "Site mobile loue sur demande"],
+      "reponse": 2,
+      "explication": "Un RTO tres court et un RPO quasi nul exigent un site operationnel avec replication synchrone.",
+      "indice": "Plus le RTO est court, plus le site doit etre pret.",
+      "astuce": "Froid = lent et pas cher ; chaud = rapide et cher.",
+      "tags": ["PRA", "site de releve"], "objectif_sy0701": "3.4"
+    },
+    {
+      "id": "Q012", "domaine": 3, "cours_google": 3, "type": "qcm", "difficulte": "moyen", "temps_sec": 50,
+      "enonce": "Ou placer un serveur web accessible depuis Internet pour limiter l'exposition du reseau interne ?",
+      "options": ["Dans le meme VLAN que les postes des employes", "Dans un sous-reseau filtre (DMZ / screened subnet)", "Directement connecte a Internet sans pare-feu", "Dans le reseau des serveurs de base de donnees"],
+      "reponse": 1,
+      "explication": "Une DMZ isole les services exposes du reseau interne.",
+      "indice": "Pense a une zone tampon.",
+      "astuce": "Exposé a Internet = DMZ.",
+      "tags": ["segmentation", "DMZ"], "objectif_sy0701": "3.2"
+    },
+    {
+      "id": "Q013", "domaine": 3, "cours_google": 3, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Une entreprise installe 200 cameras IP dont le micrologiciel n'est plus mis a jour. Quelle mesure reduit le mieux le risque ?",
+      "options": ["Les placer sur le meme reseau que les serveurs pour simplifier", "Les isoler dans un VLAN dedie avec regles de pare-feu strictes", "Desactiver les journaux", "Changer la couleur des boitiers"],
+      "reponse": 1,
+      "explication": "Quand on ne peut pas corriger un appareil, on l'isole : segmentation et controles compensatoires.",
+      "indice": "Impossible de patcher, donc on limite la portee.",
+      "astuce": "Non patchable = segmenter.",
+      "tags": ["IoT", "segmentation"], "objectif_sy0701": "3.1"
+    },
+    {
+      "id": "Q014", "domaine": 4, "cours_google": 4, "type": "qcm", "difficulte": "facile", "temps_sec": 45,
+      "enonce": "Le fichier rapport.txt appartient a alice:finance et ses permissions sont -rw-r-----. Laquelle de ces affirmations est vraie ?",
+      "options": ["Les membres du groupe finance peuvent le lire mais pas le modifier", "Tout le monde peut le lire", "Alice peut seulement le lire", "Tout le monde peut l'ecrire"],
+      "reponse": 0,
+      "explication": "rw- pour le proprietaire, r-- pour le groupe, --- pour les autres : c'est chmod 640.",
+      "indice": "Decoupe en trois blocs : proprietaire, groupe, autres.",
+      "astuce": "r=4, w=2, x=1 ; 640 = rw- r-- ---.",
+      "tags": ["Linux", "permissions"], "objectif_sy0701": "4.1"
+    },
+    {
+      "id": "Q015", "domaine": 4, "cours_google": 6, "type": "scenario", "difficulte": "moyen", "temps_sec": 90,
+      "enonce": "Les journaux d'authentification montrent, en 10 minutes, 4 200 echecs de connexion provenant de 12 adresses IP, touchant 1 800 comptes differents, avec seulement 3 mots de passe essayes (Hiver2026!, Password1, Bienvenue1). De quelle attaque s'agit-il ?",
+      "options": ["Force brute classique sur un seul compte", "Password spraying", "Credential stuffing avec une fuite de donnees", "Craquage hors ligne de hashes"],
+      "reponse": 1,
+      "explication": "Peu de mots de passe essayes sur beaucoup de comptes : c'est du password spraying. Mitigations : MFA, verrouillage intelligent, detection des tentatives distribuees.",
+      "indice": "Beaucoup de comptes, peu de mots de passe.",
+      "astuce": "Spraying = 1 mot de passe sur N comptes ; force brute = N mots de passe sur 1 compte.",
+      "tags": ["authentification", "journaux"], "objectif_sy0701": "4.9"
+    },
+    {
+      "id": "Q016", "domaine": 4, "cours_google": 5, "type": "qcm", "difficulte": "moyen", "temps_sec": 75,
+      "enonce": "Deux vulnerabilites sont detectees : A (CVSS 9,8) sur un serveur de test isole sans acces externe, et B (CVSS 6,5) sur un portail client expose a Internet avec un exploit public. Laquelle traiter en premier ?",
+      "options": ["A, car son score CVSS est le plus eleve", "B, car l'exposition, l'exploitabilite et la criticite de l'actif augmentent le risque reel", "Aucune des deux", "Les deux dans l'ordre alphabetique"],
+      "reponse": 1,
+      "explication": "La priorisation tient compte du contexte, pas seulement du score de base.",
+      "indice": "Le score n'est qu'un point de depart.",
+      "astuce": "Exposition + exploit public + criticite = priorite.",
+      "tags": ["gestion des vulnerabilites", "CVSS"], "objectif_sy0701": "4.3"
+    },
+    {
+      "id": "Q017", "domaine": 5, "cours_google": 2, "type": "libre", "difficulte": "moyen", "temps_sec": 240,
+      "enonce": "Explique les quatre strategies de traitement du risque (acceptation, transfert, attenuation, evitement) et donne un exemple concret pour chacune.",
+      "reponse": {
+        "modele": "Acceptation : on tolere un risque faible dont le cout de traitement depasse l'impact. Transfert : on le deplace, par exemple avec une cyberassurance. Attenuation : on le reduit avec des controles, par exemple MFA et correctifs. Evitement : on abandonne l'activite risquee, par exemple ne pas stocker de donnees de cartes.",
+        "mots_cles": [["acceptation", "accepter", "tolerer"], ["transfert", "transferer", "assurance"], ["attenuation", "mitigation", "reduire", "controles"], ["evitement", "eviter", "abandonner"], ["exemple"]],
+        "points": 10, "seuil_reussite": 6
+      },
+      "explication": "Chaque strategie doit etre definie et illustree.",
+      "indice": "Accepter, transferer, reduire, eviter.",
+      "astuce": "Mnemonique : A-T-A-E.",
+      "tags": ["risque"], "objectif_sy0701": "5.2"
+    },
+    {
+      "id": "Q018", "domaine": 5, "cours_google": 2, "type": "qcm", "difficulte": "difficile", "temps_sec": 90,
+      "enonce": "Un actif vaut 200 000 $. Un incident en detruit 25 % de la valeur et il survient en moyenne une fois tous les deux ans. Quelle est l'ALE (perte annuelle attendue) ?",
+      "options": ["12 500 $", "25 000 $", "50 000 $", "100 000 $"],
+      "reponse": 1,
+      "explication": "SLE = 200 000 x 0,25 = 50 000 $. ARO = 0,5. ALE = SLE x ARO = 25 000 $.",
+      "indice": "Calcule d'abord la perte par incident.",
+      "astuce": "SLE = AV x EF ; ALE = SLE x ARO.",
+      "tags": ["risque", "calcul"], "objectif_sy0701": "5.2"
+    },
+    {
+      "id": "Q019", "domaine": 5, "cours_google": 2, "type": "vf", "difficulte": "facile", "temps_sec": 20,
+      "enonce": "Une politique de securite est un controle de categorie manageriale (administrative).",
+      "reponse": true,
+      "explication": "Les politiques et procedures sont des controles manageriaux/administratifs.",
+      "indice": "Pense au papier plutot qu'a la technologie.",
+      "astuce": "Categories : technique, manageriale, operationnelle, physique.",
+      "tags": ["controles", "gouvernance"], "objectif_sy0701": "1.1"
+    },
+    {
+      "id": "Q020", "domaine": 1, "cours_google": 5, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Bob veut envoyer a Alice un message que seule Alice pourra lire, sans partage prealable de secret. Que doit-il faire ?",
+      "options": ["Chiffrer avec la cle privee de Bob", "Chiffrer avec la cle publique d'Alice", "Chiffrer avec la cle publique de Bob", "Envoyer le message en clair avec un hash"],
+      "reponse": 1,
+      "explication": "Seule la cle privee d'Alice peut dechiffrer un message chiffre avec sa cle publique.",
+      "indice": "Qui doit pouvoir dechiffrer ?",
+      "astuce": "Confidentialite : cle publique du destinataire.",
+      "tags": ["cryptographie"], "objectif_sy0701": "1.4"
+    },
+    {
+      "id": "Q021", "domaine": 1, "cours_google": 5, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Alice veut prouver a Bob qu'elle est l'auteure d'un message et qu'il n'a pas ete modifie. Que fait-elle ?",
+      "options": ["Chiffre le message avec la cle publique de Bob", "Signe le hash du message avec sa cle privee", "Signe avec la cle publique de Bob", "Chiffre avec une cle symetrique partagee"],
+      "reponse": 1,
+      "explication": "La signature numerique assure l'authenticite, l'integrite et la non-repudiation.",
+      "indice": "Seule Alice possede sa cle privee.",
+      "astuce": "Signature : cle privee de l'expediteur ; verification : cle publique.",
+      "tags": ["signature numerique", "PKI"], "objectif_sy0701": "1.4"
+    },
+    {
+      "id": "Q022", "domaine": 3, "cours_google": 5, "type": "qcm", "difficulte": "difficile", "temps_sec": 60,
+      "enonce": "Une entreprise utilise une machine virtuelle IaaS chez un fournisseur infonuagique. Qui est responsable des correctifs du systeme d'exploitation invite ?",
+      "options": ["Le fournisseur infonuagique", "Le client", "Les deux a parts egales", "Le fabricant du processeur"],
+      "reponse": 1,
+      "explication": "En IaaS, le fournisseur gere l'infrastructure physique ; le client gere l'OS, les applications et les donnees.",
+      "indice": "Plus on monte vers SaaS, plus le fournisseur en fait.",
+      "astuce": "IaaS : client = OS et au-dessus.",
+      "tags": ["cloud", "responsabilite partagee"], "objectif_sy0701": "3.1"
+    },
+    {
+      "id": "Q023", "domaine": 2, "cours_google": 5, "type": "scenario", "difficulte": "difficile", "temps_sec": 120,
+      "enonce": "Une mise a jour signee, publiee par un editeur de logiciel de supervision reconnu, installe une porte derobee chez des centaines de clients. Quelle est la nature de l'attaque et quelle mesure aurait le mieux limite l'impact ?",
+      "options": ["Attaque de la chaine d'approvisionnement ; segmentation, surveillance du trafic sortant et verification de l'integrite des composants", "Attaque par force brute ; mots de passe plus longs", "Hameconnage cible ; formation uniquement", "Deni de service ; plus de bande passante"],
+      "reponse": 0,
+      "explication": "La confiance accordee a un fournisseur est exploitee. On limite les degats avec moindre privilege, segmentation et detection.",
+      "indice": "Le code malveillant arrive par un canal legitime.",
+      "astuce": "Faire confiance, mais verifier : fournisseurs aussi.",
+      "tags": ["chaine d'approvisionnement"], "objectif_sy0701": "2.2"
+    },
+    {
+      "id": "Q024", "domaine": 4, "cours_google": 6, "type": "urgence", "difficulte": "moyen", "temps_sec": 45,
+      "enonce": "ALERTE : un employe avoue avoir saisi ses identifiants sur un faux portail de connexion il y a 5 minutes. Quelle est la premiere action la plus utile ?",
+      "options": ["Attendre de voir si quelque chose se passe", "Reinitialiser le mot de passe, revoquer les sessions actives et verifier l'activite du compte", "Supprimer le courriel d'hameconnage seulement", "Redemarrer son ordinateur"],
+      "reponse": 1,
+      "explication": "Il faut couper l'acces de l'attaquant (mot de passe, sessions, jetons) puis investiguer et signaler.",
+      "indice": "Rends les identifiants voles inutilisables.",
+      "astuce": "Identifiants exposes = reset + revoquer sessions + MFA.",
+      "tags": ["hameconnage", "identifiants"], "objectif_sy0701": "4.8"
+    },
+    {
+      "id": "Q025", "domaine": 1, "cours_google": 5, "type": "qcm", "difficulte": "facile", "temps_sec": 30,
+      "enonce": "Une empreinte digitale utilisee pour deverrouiller un portable correspond a quel type de facteur d'authentification ?",
+      "options": ["Ce que l'on sait", "Ce que l'on possede", "Ce que l'on est", "Ou l'on se trouve"],
+      "reponse": 2,
+      "explication": "Les donnees biometriques sont des facteurs d'inherence (ce que l'on est).",
+      "indice": "Elle fait partie de ton corps.",
+      "astuce": "Savoir, avoir, etre, lieu.",
+      "tags": ["MFA", "biometrie"], "objectif_sy0701": "1.2"
+    },
+    {
+      "id": "Q026", "domaine": 4, "cours_google": 6, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Quel outil collecte et correle les journaux de plusieurs sources pour generer des alertes, et quel outil sert ensuite a automatiser les reponses ?",
+      "options": ["SIEM puis SOAR", "SOAR puis SIEM", "IDS puis VPN", "WAF puis DLP"],
+      "reponse": 0,
+      "explication": "Le SIEM centralise et correle ; le SOAR orchestre et automatise la reponse.",
+      "indice": "Un outil voit, l'autre agit.",
+      "astuce": "SIEM = voir ; SOAR = agir.",
+      "tags": ["SIEM", "SOAR"], "objectif_sy0701": "4.4"
+    },
+    {
+      "id": "Q027", "domaine": 4, "cours_google": 6, "type": "libre", "difficulte": "difficile", "temps_sec": 300,
+      "enonce": "Voici un extrait des journaux d'un serveur web : 203.0.113.45 - GET /produit?id=1' OR '1'='1 -- HTTP/1.1 200 1843 | 203.0.113.45 - GET /produit?id=1 UNION SELECT login,mdp FROM utilisateurs-- HTTP/1.1 200 5120. Identifie l'attaque, les indicateurs de compromission et les actions a mener.",
+      "reponse": {
+        "modele": "Il s'agit d'injection SQL. Les indicateurs sont les apostrophes, OR 1=1, UNION SELECT et les reponses 200 avec une taille inhabituelle suggerant une exfiltration. Actions : bloquer l'IP, verifier ce qui a ete expose (table utilisateurs), reinitialiser les mots de passe, corriger le code avec des requetes parametrees, activer un WAF, conserver les journaux et evaluer la notification selon la loi applicable.",
+        "mots_cles": [["injection sql", "sqli"], ["union select", "or 1=1", "apostrophe"], ["exfiltration", "donnees exposees", "fuite"], ["bloquer", "pare-feu", "waf"], ["requetes parametrees", "validation", "prepared"], ["reinitialiser", "mots de passe"], ["notification", "avis", "conformite"]],
+        "points": 10, "seuil_reussite": 6
+      },
+      "explication": "Reponse complete : identification, indicateurs, confinement, correction et conformite.",
+      "indice": "Cherche UNION SELECT et la taille des reponses.",
+      "astuce": "Une 200 apres injection n'est pas rassurante : cela peut vouloir dire que l'attaque a fonctionne.",
+      "tags": ["SQLi", "analyse de journaux"], "objectif_sy0701": "4.9"
+    },
+    {
+      "id": "Q028", "domaine": 3, "cours_google": 3, "type": "ordonnancement", "difficulte": "difficile", "temps_sec": 90,
+      "enonce": "Remets ces regles de pare-feu dans l'ordre pour que le serveur web (10.0.0.10) soit accessible en HTTPS, que l'administration SSH ne vienne que du sous-reseau d'admin (10.0.5.0/24) et que tout le reste soit refuse.",
+      "elements": ["Refuser tout le reste", "Autoriser TCP 22 depuis 10.0.5.0/24 vers 10.0.0.10", "Autoriser TCP 443 depuis n'importe ou vers 10.0.0.10"],
+      "reponse": [2, 1, 0],
+      "explication": "Les regles specifiques viennent d'abord ; la regle « deny all » est toujours placee en dernier.",
+      "indice": "Un pare-feu lit les regles de haut en bas et s'arrete a la premiere qui correspond.",
+      "astuce": "Specifique d'abord, refus implicite a la fin.",
+      "tags": ["pare-feu", "ACL"], "objectif_sy0701": "3.2"
+    },
+    {
+      "id": "Q029", "domaine": 2, "cours_google": 5, "type": "vf", "difficulte": "difficile", "temps_sec": 25,
+      "enonce": "Une vulnerabilite zero-day est une faille pour laquelle un correctif existe mais n'a pas encore ete installe.",
+      "reponse": false,
+      "explication": "Un zero-day est une faille inconnue de l'editeur ou sans correctif disponible. Une faille avec correctif non applique est une vulnerabilite connue non corrigee.",
+      "indice": "Zero jour de preparation pour l'editeur.",
+      "astuce": "Zero-day = pas de correctif ; N-day = correctif existe.",
+      "tags": ["vulnerabilites"], "objectif_sy0701": "2.3"
+    },
+    {
+      "id": "Q030", "domaine": 5, "cours_google": 2, "type": "qcm", "difficulte": "moyen", "temps_sec": 45,
+      "enonce": "Quel document definit des niveaux de service mesurables d'un fournisseur (disponibilite de 99,9 %, delai de reponse) ?",
+      "options": ["NDA", "SLA", "MOU", "Politique d'utilisation acceptable"],
+      "reponse": 1,
+      "explication": "Le SLA fixe les engagements mesurables. Le NDA protege la confidentialite, le MOU est un accord d'intention.",
+      "indice": "Service Level ...",
+      "astuce": "SLA = chiffres ; NDA = secret ; MOU = intention.",
+      "tags": ["tiers", "contrats"], "objectif_sy0701": "5.3"
+    },
+    {
+      "id": "Q031", "domaine": 2, "cours_google": 1, "type": "appariement", "difficulte": "facile", "temps_sec": 90,
+      "enonce": "Associe chaque attaque a sa description.",
+      "paires": [
+        {"gauche": "Hameconnage (phishing)", "droite": "Courriel frauduleux pour voler des identifiants"},
+        {"gauche": "Rancongiciel (ransomware)", "droite": "Chiffre les donnees et exige un paiement"},
+        {"gauche": "Deni de service distribue (DDoS)", "droite": "Sature un service avec un trafic massif"},
+        {"gauche": "Ingenierie sociale", "droite": "Manipulation psychologique d'une personne"}
+      ],
+      "reponse": "paires_dans_l_ordre",
+      "explication": "Ce sont des definitions de base a maitriser pour les questions de reconnaissance d'attaques.",
+      "indice": "Cherche le mot cle dans chaque definition.",
+      "astuce": "Ransom = rancon ; DDoS = saturation.",
+      "tags": ["menaces"], "objectif_sy0701": "2.2"
+    },
+    {
+      "id": "Q032", "domaine": 4, "cours_google": 6, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Selon l'ordre de volatilite, laquelle de ces sources de preuves faut-il collecter en premier sur un poste suspect encore allume ?",
+      "options": ["Disque dur", "Memoire vive (RAM)", "Journaux sur un serveur distant", "Sauvegardes sur bande"],
+      "reponse": 1,
+      "explication": "La RAM disparait a l'extinction ; on collecte du plus volatil au moins volatil.",
+      "indice": "Qu'est-ce qui s'efface si on eteint la machine ?",
+      "astuce": "Registres et cache, RAM, swap, disque, journaux distants, archives.",
+      "tags": ["forensique"], "objectif_sy0701": "4.8"
+    },
+    {
+      "id": "Q033", "domaine": 4, "cours_google": 6, "type": "cas_complexe", "difficulte": "difficile", "temps_sec": 420,
+      "enonce": "Cas : Hopital Saint-Laurent (Quebec). Nuit du jeudi au vendredi. Vous etes analyste de garde. Les systemes cliniques doivent rester disponibles.",
+      "etapes": [
+        {
+          "titre": "Detection",
+          "enonce": "03 h 12 : alerte EDR, PowerShell encode sur le poste d'un administrateur. 03 h 20 : un compte de service est cree. 03 h 40 : des dossiers patients partent vers un stockage infonuagique externe. Comment qualifier l'incident ?",
+          "options": ["Fausse alerte", "Violation de donnees avec exfiltration, possible double extorsion", "Simple panne reseau", "Test d'intrusion autorise"],
+          "reponse": 1,
+          "explication": "Execution suspecte, persistance (compte cree) et exfiltration : c'est un incident majeur."
+        },
+        {
+          "titre": "Confinement",
+          "enonce": "Quelle action privilegier en gardant les systemes vitaux disponibles ?",
+          "options": ["Couper tout le reseau de l'hopital", "Isoler les hotes compromis, desactiver le compte de service et bloquer les destinations d'exfiltration, en gardant les systemes vitaux segmentes", "Redemarrer tous les serveurs", "Attendre le matin"],
+          "reponse": 1,
+          "explication": "Le confinement doit etre cible pour limiter l'impact sur les soins."
+        },
+        {
+          "titre": "Gouvernance",
+          "enonce": "Des donnees de sante ont ete exfiltrees. Quelle suite est la plus appropriee ?",
+          "options": ["Taire l'incident", "Activer la cellule de crise, informer le juridique et le responsable de la protection des renseignements, et evaluer l'avis aux autorites et aux personnes concernees selon la loi applicable (ex. Loi 25 au Quebec)", "Informer seulement les medias", "Supprimer les journaux"],
+          "reponse": 1,
+          "explication": "Un incident de confidentialite pouvant causer un prejudice serieux exige une evaluation et, souvent, un avis aux autorites et aux personnes."
+        }
+      ],
+      "indice": "Pense disponibilite des soins, preuves et obligations legales.",
+      "astuce": "Confinement cible + preuves + communication encadree.",
+      "tags": ["cas complexe", "sante", "exfiltration", "conformite"], "objectif_sy0701": "4.8"
+    },
+    {
+      "id": "Q034", "domaine": 3, "cours_google": 2, "type": "qcm", "difficulte": "facile", "temps_sec": 30,
+      "enonce": "Lequel de ces elements est un controle de securite physique ?",
+      "options": ["Pare-feu", "Sas d'entree (mantrap)", "Antivirus", "Chiffrement de disque"],
+      "reponse": 1,
+      "explication": "Un sas controle l'acces physique a une zone. Les autres sont techniques.",
+      "indice": "Cherche ce que l'on peut toucher.",
+      "astuce": "Physique : serrures, camera, cloture, sas, badge.",
+      "tags": ["securite physique"], "objectif_sy0701": "1.2"
+    },
+    {
+      "id": "Q035", "domaine": 2, "cours_google": 2, "type": "qcm", "difficulte": "moyen", "temps_sec": 60,
+      "enonce": "Un employe sur le point de quitter l'entreprise copie des milliers de fichiers clients vers une cle USB personnelle. Quelle mesure technique aurait pu bloquer ou signaler l'action ?",
+      "options": ["DLP (prevention de la perte de donnees) et controle des peripheriques USB", "Un meilleur pare-feu applicatif web", "Un serveur DNS secondaire", "Un certificat TLS plus long"],
+      "reponse": 0,
+      "explication": "C'est une menace interne. Le DLP et le blocage des supports amovibles reduisent l'exfiltration.",
+      "indice": "Quelle technologie surveille les donnees qui sortent ?",
+      "astuce": "Insider = DLP + moindre privilege + journalisation.",
+      "tags": ["menace interne", "DLP"], "objectif_sy0701": "2.1"
+    },
+    {
+      "id": "Q036", "domaine": 4, "cours_google": 6, "type": "vf", "difficulte": "facile", "temps_sec": 20,
+      "enonce": "La chaine de possession (chain of custody) documente qui a manipule une preuve numerique, quand et pourquoi.",
+      "reponse": true,
+      "explication": "Elle garantit l'integrite et la recevabilite de la preuve.",
+      "indice": "Qui, quand, pourquoi.",
+      "astuce": "Pas de documentation = preuve contestable.",
+      "tags": ["forensique"], "objectif_sy0701": "4.8"
+    }
+  ],
+  "gabarits": [
+    {
+      "id": "GAB-ALE", "domaine": 5, "type": "qcm", "difficulte": ["moyen", "difficile"],
+      "enonce_modele": "Un actif vaut {VA} $. Un incident en detruit {FE} % de la valeur et survient {ARO_TEXTE}. Quelle est l'ALE ?",
+      "variables": {"VA": {"min": 20000, "max": 2000000, "pas": 5000}, "FE": {"valeurs": [5, 10, 20, 25, 40, 50, 75, 100]}, "ARO": {"valeurs": [0.1, 0.25, 0.5, 1, 2, 4, 12]}},
+      "calcul": "SLE = VA * FE/100 ; ALE = SLE * ARO",
+      "distracteurs": ["oublier ARO", "oublier FE", "confondre SLE et ALE"]
+    },
+    {
+      "id": "GAB-RPO", "domaine": 4, "type": "plan_reprise", "difficulte": ["facile", "moyen"],
+      "enonce_modele": "Sauvegardes {TYPE} a {HEURE_SAUV}. Panne a {HEURE_PANNE}. Quelle est la perte de donnees ?",
+      "variables": {"TYPE": {"valeurs": ["completes quotidiennes", "differentielles", "incrementielles toutes les 4 h"]}, "HEURE_SAUV": {"format": "HH:MM"}, "HEURE_PANNE": {"format": "HH:MM"}},
+      "calcul": "difference en heures et minutes entre la derniere sauvegarde et la panne"
+    },
+    {
+      "id": "GAB-CHMOD", "domaine": 4, "type": "qcm", "difficulte": ["facile", "moyen"],
+      "enonce_modele": "Quelle commande donne a {PROPRIO} {P1}, au groupe {P2} et aux autres {P3} sur {FICHIER} ?",
+      "variables": {"P1": {"valeurs": ["lecture/ecriture", "tous les droits", "lecture seule"]}, "P2": {"valeurs": ["lecture seule", "lecture/execution", "aucun droit"]}, "P3": {"valeurs": ["aucun droit", "lecture seule"]}},
+      "calcul": "convertir les droits en notation octale (r=4, w=2, x=1)"
+    },
+    {
+      "id": "GAB-CIDR", "domaine": 3, "type": "qcm", "difficulte": ["moyen"],
+      "enonce_modele": "Combien d'hotes utilisables contient le reseau {RESEAU}/{MASQUE} ?",
+      "variables": {"MASQUE": {"min": 20, "max": 30}, "RESEAU": {"format": "IPv4 prive"}},
+      "calcul": "2^(32 - MASQUE) - 2"
+    },
+    {
+      "id": "GAB-PORTS", "domaine": 3, "type": "appariement", "difficulte": ["facile"],
+      "enonce_modele": "Associe chaque protocole a son port par defaut.",
+      "banque_paires": [["SSH", "22/TCP"], ["HTTPS", "443/TCP"], ["DNS", "53/UDP et TCP"], ["RDP", "3389/TCP"], ["SMTP", "25/TCP"], ["LDAPS", "636/TCP"], ["SFTP", "22/TCP"], ["IMAPS", "993/TCP"]],
+      "regle": "tirer 4 paires aleatoires par question"
+    },
+    {
+      "id": "GAB-JOURNAUX", "domaine": 4, "type": "scenario", "difficulte": ["moyen", "difficile"],
+      "enonce_modele": "Extrait de journaux : {LIGNES_GENEREES}. Quelle attaque est en cours ?",
+      "variables": {"ATTAQUE": {"valeurs": ["force brute SSH", "password spraying", "injection SQL", "balayage de ports", "exfiltration DNS", "traversee de repertoires"]}},
+      "regle": "generer 5 a 8 lignes realistes avec IP aleatoires ; la bonne reponse est la valeur d'ATTAQUE ; les distracteurs sont des attaques voisines"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+// Schema Prisma — Phase 1 (Fondations)
+// SQLite pour demarrer. Les valeurs "enum" sont stockees en String et
+// contraintes par Zod (@secprep/bank), ce qui garde le schema portable
+// vers PostgreSQL plus tard.
+//
+// Les tables des phases ulterieures (revision_espacee, session_examen, duel,
+// signalement_question, rapport*, scenario_lab, enquete, capteur, ...) seront
+// ajoutees a leur phase respective via des migrations incrementales.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id             String   @id @default(cuid())
+  courriel       String   @unique
+  nom            String
+  motDePasseHash String
+  role           String   @default("etudiant") // etudiant | admin
+  creeLe         DateTime @default(now())
+
+  tentatives   Tentative[]
+  progressions ProgressionDomaine[]
+
+  @@map("utilisateur")
+}
+
+model Question {
+  id             String   @id // = l'id du JSON, ex. "Q001"
+  domaine        Int // 1..5
+  coursGoogle    Int? // 1..9
+  type           String // qcm | qcm_multiple | vf | libre | scenario | urgence | plan_reprise | ordonnancement | appariement | cas_complexe
+  difficulte     String // facile | moyen | difficile
+  tempsSec       Int
+  enonce         String
+  explication    String
+  indice         String?
+  astuce         String?
+  objectifSy0701 String?
+  tags           String   @default("[]") // JSON string[]
+  contenu        String // JSON specifique au type (valide par Zod a l'ecriture ET a la lecture)
+  source         String   @default("officiel") // officiel | lot | genere
+  statut         String   @default("valide") // brouillon | valide
+  creeLe         DateTime @default(now())
+  misAJourLe     DateTime @updatedAt
+
+  tentatives Tentative[]
+
+  @@index([domaine])
+  @@index([type])
+  @@index([difficulte])
+  @@map("question")
+}
+
+// Structure prete — remplie a partir de la Phase 2.
+model Tentative {
+  id            String   @id @default(cuid())
+  utilisateurId String
+  questionId    String
+  reponseDonnee String // JSON
+  correct       Boolean
+  score         Int      @default(0)
+  tempsPris     Int      @default(0) // secondes
+  creeLe        DateTime @default(now())
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@index([questionId])
+  @@map("tentative")
+}
+
+// Structure prete — remplie a partir de la Phase 2.
+model ProgressionDomaine {
+  id               String   @id @default(cuid())
+  utilisateurId    String
+  domaine          Int
+  questionsVues    Int      @default(0)
+  questionsReussies Int     @default(0)
+  majLe            DateTime @updatedAt
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, domaine])
+  @@map("progression_domaine")
+}

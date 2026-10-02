@@ -1,0 +1,37 @@
+# Dépendances
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Environnement & secrets (NE JAMAIS committer)
+.env
+.env.*
+!.env.example
+
+# Base de données locale (SQLite)
+*.db
+*.db-journal
+*.sqlite
+packages/db/prisma/*.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Divers
+coverage/
+.turbo/
