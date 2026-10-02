@@ -91,6 +91,58 @@ body {
   .chip {
     @apply inline-flex items-center rounded-full border border-border bg-surface px-2.5 py-0.5 text-xs font-medium text-muted;
   }
+  /* ---- Motifs minimalistes reutilisables ---- */
+  /* Groupe de tuiles-chiffres : un seul cadre borde, separateurs fins. */
+  .stat-group {
+    @apply grid overflow-hidden rounded-xl border border-border bg-surface;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @screen sm {
+    .stat-group {
+      grid-template-columns: repeat(var(--stat-cols, 4), minmax(0, 1fr));
+    }
+  }
+  .stat {
+    @apply border-b border-r border-border p-4;
+  }
+  .stat:nth-child(2n) {
+    @apply border-r-0;
+  }
+  @screen sm {
+    .stat {
+      @apply border-b-0;
+    }
+    .stat:nth-child(2n) {
+      @apply border-r;
+    }
+    .stat:last-child {
+      @apply border-r-0;
+    }
+  }
+  .stat-k {
+    @apply text-[1.65rem] font-bold leading-none tracking-tight;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-l {
+    @apply mt-1.5 text-xs text-muted;
+  }
+  /* Barre de progression fine (remplissage accent). */
+  .meter {
+    @apply h-1.5 overflow-hidden rounded-full bg-surface-2;
+  }
+  .meter > i {
+    @apply block h-full rounded-full bg-brand transition-all;
+  }
+  /* Liste bordee a lignes separees (domaines, listes de ressources). */
+  .rows {
+    @apply overflow-hidden rounded-xl border border-border bg-surface;
+  }
+  .rows > * + * {
+    @apply border-t border-border;
+  }
+  .row-item {
+    @apply flex items-center gap-4 px-4 py-3.5;
+  }
 }
 
 /* Apercu Markdown des rapports */
