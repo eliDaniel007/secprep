@@ -1,19 +1,20 @@
-// Schema Prisma — Phase 1 (Fondations)
-// SQLite pour demarrer. Les valeurs "enum" sont stockees en String et
-// contraintes par Zod (@secprep/bank), ce qui garde le schema portable
-// vers PostgreSQL plus tard.
+// Schema Prisma — PostgreSQL (deploiement Vercel + Neon).
+// Les valeurs "enum" sont stockees en String et contraintes par Zod
+// (@secprep/bank). Tout le schema n'utilise que String/Int/Boolean/DateTime,
+// donc il est pleinement compatible Postgres.
 //
-// Les tables des phases ulterieures (revision_espacee, session_examen, duel,
-// signalement_question, rapport*, scenario_lab, enquete, capteur, ...) seront
-// ajoutees a leur phase respective via des migrations incrementales.
+// DATABASE_URL : connexion applicative (pool Neon, pour le runtime serverless).
+// DIRECT_URL   : connexion directe (non poolee) pour `prisma db push`/migrate.
+// En local, les deux peuvent pointer vers la meme base Neon.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Utilisateur {
