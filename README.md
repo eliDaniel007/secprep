@@ -3,10 +3,10 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 5 — Rapports + IA.**
-> Editeur Markdown avec versions, modes Coach/Correcteur (API Claude),
-> verite terrain par scenario, sortie JSON validee (Zod), garde-fous anti-injection.
-> (Phases 1-4 : fondations, quiz, chrono/examen, revision espacee & duel.)
+> **Etat actuel : Phase 6 — Generateur de journaux & SIEM simule.**
+> Journaux synthetiques reproductibles (verite terrain), moteur de recherche,
+> tableaux de bord, regles de detection, enquete -> brouillon de rapport.
+> (Phases 1-5 : fondations, quiz, chrono/examen, revision & duel, rapports + IA.)
 
 ## Prerequis
 
@@ -126,6 +126,26 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 > Sans `ANTHROPIC_API_KEY`, l'editeur et les versions fonctionnent ; l'analyse IA
 > affiche un message clair invitant a configurer la cle.
 
+## Journaux & SIEM simule (Phase 6)
+
+- **`packages/loggen`** : generateur de journaux **synthetiques** (auth SSH/RDP,
+  Windows 4624/4625) avec **vérité terrain**, **graine reproductible** (meme
+  graine = meme resultat), volume reglable, bruit normal mele a l'attaque.
+  Donnees fictives uniquement (RFC 1918 / RFC 5737).
+- **`packages/siem-query`** : langage de recherche (`champ=valeur`, `ET/OU/NON`,
+  comparaisons, `| stats count by champ`, `| top champ`, plage de temps) +
+  moteur d'execution.
+- **SIEM simule** (`/siem`) :
+  - **recherche** (table d'evenements, **histogramme temporel**, detail JSON) ;
+  - **tableau de bord** (echecs d'auth, top IP, top comptes, succes externes) ;
+  - **regles de detection** : teste une regle et affiche **vrais/faux
+    positifs/negatifs** et precision/rappel compares a la verite terrain ;
+  - **enquete** : epingler des preuves, verdict, notes, puis
+    **« brouillon de rapport »** qui cree un rapport (Module 1).
+- Un scenario complet (**password spraying**) est resoluble a la recherche et
+  genere un brouillon de rapport. Evenements marques « simule » (vs « reel »,
+  capteur en Phase 9).
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -160,7 +180,9 @@ secprep/
 │  ├─ db/             # Prisma : schema, client, migrations
 │  ├─ bank/           # Zod (source de verite), validate-bank, seed, create-user
 │  ├─ quiz/           # Correcteurs (10 types) + bareme + examen + SM-2
-│  └─ report-grader/  # Grilles + schemas Zod + appel IA (Coach/Correcteur)
+│  ├─ report-grader/  # Grilles + schemas Zod + appel IA (Coach/Correcteur)
+│  ├─ loggen/         # Journaux synthetiques reproductibles + verite terrain
+│  └─ siem-query/     # Langage de recherche + moteur (SIEM)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)

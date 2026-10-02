@@ -29,6 +29,9 @@ importers:
       '@secprep/report-grader':
         specifier: workspace:*
         version: link:../../packages/report-grader
+      '@secprep/siem-query':
+        specifier: workspace:*
+        version: link:../../packages/siem-query
       dompurify:
         specifier: ^3.1.7
         version: 3.4.16
@@ -87,6 +90,9 @@ importers:
       '@secprep/db':
         specifier: workspace:*
         version: link:../db
+      '@secprep/loggen':
+        specifier: workspace:*
+        version: link:../loggen
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -114,6 +120,12 @@ importers:
         specifier: ^5.20.0
         version: 5.22.0
 
+  packages/loggen:
+    devDependencies:
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
   packages/quiz:
     dependencies:
       '@secprep/bank':
@@ -132,6 +144,12 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.25.76
+    devDependencies:
+      vitest:
+        specifier: ^2.1.2
+        version: 2.1.9(@types/node@20.19.43)
+
+  packages/siem-query:
     devDependencies:
       vitest:
         specifier: ^2.1.2

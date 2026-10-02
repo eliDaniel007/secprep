@@ -1,4 +1,5 @@
 import { prisma } from "@secprep/db";
+import { genererScenario } from "@secprep/loggen";
 import { chargerBanque, chargerScenarios } from "../loader";
 import { validerBanque } from "../validator";
 import { versRow } from "../mapper";
@@ -67,6 +68,46 @@ async function main(): Promise<void> {
   }
   if (scenarios.length > 0) {
     console.log(`Scenarios : ${sCrees} cree(s), ${sMajs} mis a jour.`);
+  }
+
+  // Jeu de journaux SIEM (Phase 6) — genere de maniere deterministe.
+  const GRAINE_SIEM = "secprep-2026";
+  const jeuGen = genererScenario("password-spraying", { graine: GRAINE_SIEM, volume: 3000 });
+  const jeu = await prisma.jeuJournaux.upsert({
+    where: { slug: jeuGen.slug },
+    create: {
+      slug: jeuGen.slug,
+      titre: jeuGen.titre,
+      description: jeuGen.verite.description,
+      graine: jeuGen.graine,
+      volume: jeuGen.evenements.length,
+      veriteTerrain: JSON.stringify(jeuGen.verite),
+    },
+    update: {
+      titre: jeuGen.titre,
+      description: jeuGen.verite.description,
+      graine: jeuGen.graine,
+      volume: jeuGen.evenements.length,
+      veriteTerrain: JSON.stringify(jeuGen.verite),
+    },
+  });
+  const nbEv = await prisma.evenement.count({ where: { jeuId: jeu.id } });
+  if (nbEv === 0) {
+    await prisma.evenement.createMany({
+      data: jeuGen.evenements.map((e) => ({
+        jeuId: jeu.id,
+        ts: new Date(e.ts),
+        source: e.source,
+        action: e.action,
+        champs: JSON.stringify(e.champs),
+        raw: e.raw,
+        malveillant: e.malveillant,
+        etiquette: e.etiquette ?? null,
+      })),
+    });
+    console.log(`SIEM : jeu "${jeuGen.slug}" cree avec ${jeuGen.evenements.length} evenements.`);
+  } else {
+    console.log(`SIEM : jeu "${jeuGen.slug}" deja present (${nbEv} evenements).`);
   }
 
   await prisma.$disconnect();

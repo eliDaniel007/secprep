@@ -8,6 +8,7 @@ const LIENS = [
   { href: "/quiz", label: "Quiz libre" },
   { href: "/examen", label: "Examen" },
   { href: "/duel", label: "Duel" },
+  { href: "/siem", label: "SIEM" },
   { href: "/rapports", label: "Rapports" },
 ];
 

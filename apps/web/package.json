@@ -16,6 +16,7 @@
     "@secprep/db": "workspace:*",
     "@secprep/quiz": "workspace:*",
     "@secprep/report-grader": "workspace:*",
+    "@secprep/siem-query": "workspace:*",
     "dompurify": "^3.1.7",
     "iron-session": "^8.0.3",
     "marked": "^14.1.3",

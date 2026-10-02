@@ -31,6 +31,7 @@ model Utilisateur {
   duelsCrees   Duel[]
   participations DuelParticipation[]
   rapports     Rapport[]
+  enquetes     Enquete[]
 
   @@map("utilisateur")
 }
@@ -232,4 +233,58 @@ model CorrectionRapport {
 
   @@index([rapportId])
   @@map("correction_rapport")
+}
+
+// Jeu de journaux synthetiques pour le SIEM (Phase 6). Genere par @secprep/loggen.
+model JeuJournaux {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  titre         String
+  description   String   @default("")
+  graine        String
+  volume        Int      @default(0)
+  veriteTerrain String   @default("{}") // JSON
+  creeLe        DateTime @default(now())
+
+  evenements Evenement[]
+  enquetes   Enquete[]
+
+  @@map("jeu_journaux")
+}
+
+model Evenement {
+  id          String   @id @default(cuid())
+  jeuId       String
+  ts          DateTime
+  source      String
+  action      String
+  champs      String   @default("{}") // JSON
+  raw         String
+  malveillant Boolean  @default(false) // verite terrain
+  etiquette   String?
+  origine     String   @default("simule") // simule | reel (capteur, Phase 9)
+
+  jeu JeuJournaux @relation(fields: [jeuId], references: [id], onDelete: Cascade)
+
+  @@index([jeuId])
+  @@index([jeuId, ts])
+  @@map("evenement")
+}
+
+model Enquete {
+  id            String   @id @default(cuid())
+  utilisateurId String
+  jeuId         String
+  titre         String
+  verdict       String? // ex. "password_spraying"
+  notes         String   @default("")
+  preuves       String   @default("[]") // JSON : ids d'evenements epingles
+  creeLe        DateTime @default(now())
+  misAJourLe    DateTime @updatedAt
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  jeu         JeuJournaux @relation(fields: [jeuId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@map("enquete")
 }
