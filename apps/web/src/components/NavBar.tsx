@@ -1,7 +1,39 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+
+function BasculeTheme() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const actuel = document.documentElement.getAttribute("data-theme");
+    setTheme(actuel === "dark" ? "dark" : "light");
+  }, []);
+
+  function basculer() {
+    const suivant = theme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", suivant);
+    try {
+      localStorage.setItem("secprep-theme", suivant);
+    } catch {
+      /* stockage indisponible : on garde juste le choix de la session */
+    }
+    setTheme(suivant);
+  }
+
+  return (
+    <button
+      onClick={basculer}
+      className="btn-ghost px-2.5 py-1.5 text-sm"
+      aria-label={theme === "dark" ? "Passer en clair" : "Passer en sombre"}
+      title={theme === "dark" ? "Thème clair" : "Thème sombre"}
+    >
+      {theme === "dark" ? "☀" : "☾"}
+    </button>
+  );
+}
 
 const LIENS = [
   { href: "/", label: "Tableau de bord" },
@@ -58,6 +90,7 @@ export function NavBar({ nom, role }: { nom: string; role?: string }) {
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden text-sm text-muted sm:inline">{nom}</span>
+          <BasculeTheme />
           <button onClick={deconnexion} className="btn-ghost px-3 py-1.5 text-xs">
             Deconnexion
           </button>
