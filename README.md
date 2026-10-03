@@ -322,3 +322,30 @@ pnpm test
 
 Couvre : normalisation et similarite, toutes les regles de `validate-bank`,
 chaque type de question, et le chargement du lot de depart reel.
+
+## Deploiement (Vercel + Neon Postgres)
+
+L'application utilise **PostgreSQL** (hebergement **Neon**, gratuit) et se
+deploie sur **Vercel**.
+
+1. **Base Neon** : cree un projet sur https://neon.tech, recupere la
+   *connection string*. Renseigne dans `.env` :
+   - `DATABASE_URL` = URL **poolee** (hote avec `-pooler`, suffixe
+     `?sslmode=require&pgbouncer=true`) — utilisee par l'application ;
+   - `DIRECT_URL` = **meme URL sans `-pooler`** — utilisee par `prisma db push`.
+2. **Schema + donnees** (une fois) :
+   ```bash
+   corepack pnpm --filter @secprep/db run push       # cree les tables
+   corepack pnpm --filter @secprep/bank run seed      # 36 questions + scenarios
+   corepack pnpm --filter @secprep/generators run seed # questions generees (brouillons)
+   ```
+3. **Vercel** : importe le depot, **Root Directory = `apps/web`**, framework
+   Next.js. Variables d'environnement a definir : `DATABASE_URL`, `DIRECT_URL`,
+   `SESSION_PASSWORD` (>= 32 car.), et au besoin `ANTHROPIC_API_KEY`.
+   Le client Prisma est genere automatiquement au `postinstall` ; le build est
+   `next build`.
+4. Les nouveaux comptes se creent via la page **/inscription** (role etudiant).
+
+> Les **Labos Docker** (Phase 7) necessitent un hote Docker : ils ne tournent
+> pas sur Vercel (serverless) et affichent « Docker indisponible ». Le reste
+> (quiz, examen, SIEM, paquets, capteurs, relecture) fonctionne.
