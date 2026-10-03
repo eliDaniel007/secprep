@@ -9,11 +9,10 @@ const LIENS = [
   { href: "/examen", label: "Examen" },
   { href: "/duel", label: "Duel" },
   { href: "/siem", label: "SIEM" },
-  { href: "/paquets", label: "Paquets" },
-  { href: "/labs", label: "Labos" },
-  { href: "/capteurs", label: "Capteurs" },
   { href: "/rapports", label: "Rapports" },
 ];
+// Masques du menu (code conserve, accessibles par URL) : Paquets (/paquets),
+// Labos (/labs, Docker indispo en ligne), Capteurs (/capteurs, agent local).
 
 const LIENS_ADMIN = [{ href: "/admin/relecture", label: "Relecture" }];
 
