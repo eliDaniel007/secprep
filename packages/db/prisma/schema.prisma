@@ -8,7 +8,10 @@
 // En local, les deux peuvent pointer vers la meme base Neon.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" pour le dev local ; "rhel-openssl-3.0.x" pour le runtime Vercel
+  // (sinon : "could not locate the Query Engine for runtime rhel-openssl-3.0.x").
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
