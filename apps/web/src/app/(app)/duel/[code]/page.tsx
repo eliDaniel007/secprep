@@ -47,12 +47,21 @@ export default async function DuelDetailPage({
       )}
 
       {maPart && (
-        <div className="card space-y-2">
+        <div className="card space-y-1">
           <p className="font-semibold text-ok">✓ Tu as joué ce défi.</p>
-          <p className="text-sm text-muted">
-            Ton score : {maPart.corrects}/{maPart.total} ·{" "}
+          <div className="text-3xl font-black">
             {pct(maPart.pointsGagnes, maPart.pointsMax)} %
+          </div>
+          <p className="text-sm text-muted">
+            {maPart.corrects}/{maPart.total} correctes · {maPart.pointsGagnes}/
+            {maPart.pointsMax} points
           </p>
+          {!coop && duel.participations.length < 2 && (
+            <p className="mt-1 text-sm text-warn">
+              Partage le code <span className="font-mono">{duel.code}</span> à ton
+              binôme : la comparaison s'affichera quand il aura joué.
+            </p>
+          )}
         </div>
       )}
 
@@ -67,7 +76,10 @@ export default async function DuelDetailPage({
         </div>
 
         {duel.participations.length === 0 ? (
-          <p className="text-muted">Personne n'a encore terminé.</p>
+          <p className="text-muted">
+            Personne n'a encore terminé. Clique « Jouer maintenant » ci-dessus, puis
+            partage le code à ton binôme.
+          </p>
         ) : coop ? (
           <Coop participations={duel.participations} />
         ) : (
