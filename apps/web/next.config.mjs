@@ -18,6 +18,7 @@ const nextConfig = {
     "@secprep/labs",
     "@secprep/sandbox",
     "@secprep/packgen",
+    "@secprep/generators",
   ],
   experimental: {
     // Trace les fichiers depuis la racine du monorepo (pnpm) pour que le moteur

@@ -38,6 +38,7 @@ function BasculeTheme() {
 const LIENS = [
   { href: "/", label: "Tableau de bord" },
   { href: "/quiz", label: "Quiz libre" },
+  { href: "/entrainement", label: "Entraînement" },
   { href: "/examen", label: "Examen" },
   { href: "/duel", label: "Duel" },
   { href: "/siem", label: "SIEM" },

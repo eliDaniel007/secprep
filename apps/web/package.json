@@ -17,6 +17,7 @@
     "@secprep/db": "workspace:*",
     "@secprep/labs": "workspace:*",
     "@secprep/packgen": "workspace:*",
+    "@secprep/generators": "workspace:*",
     "@secprep/quiz": "workspace:*",
     "@secprep/report-grader": "workspace:*",
     "@secprep/sandbox": "workspace:*",

@@ -4,7 +4,7 @@ export interface QuestionGeneree {
   id: string;
   domaine: number;
   cours_google?: number;
-  type: "qcm" | "plan_reprise" | "appariement";
+  type: "qcm" | "plan_reprise" | "appariement" | "scenario";
   difficulte: "facile" | "moyen" | "difficile";
   temps_sec: number;
   enonce: string;
