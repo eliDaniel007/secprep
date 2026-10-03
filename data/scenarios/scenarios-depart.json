@@ -72,6 +72,113 @@
         ]
       },
       "modele_markdown": "# Rapport d'incident\n\n## Resume executif\n\n## Indicateurs de compromission (IOC)\n\n## Chronologie\n\n## Donnees potentiellement exposees\n\n## Confinement\n\n## Correction\n\n## Recommandations\n\n## Conformite / notification\n"
+    },
+    {
+      "slug": "hameconnage-fraude-president",
+      "titre": "Hameconnage cible et fraude au president (BEC)",
+      "type": "incident",
+      "contexte": "Lundi 09h12. Un comptable recoit un courriel apparemment signe du PDG, depuis 'pdg@entrepise-corp.com' (le vrai domaine est 'entreprise-corp.com'), demandant un virement urgent de 48 000 $ a un nouveau fournisseur, avec la mention 'ne traite avec personne d'autre, je suis en reunion'. L'en-tete montre un champ Reply-To vers 'ceo.finance@gmail.com'. Le comptable a repondu mais n'a pas encore viré. Trois autres employes signalent un courriel similaire. L'authentification SPF du message est en echec (softfail).",
+      "objectif_sy0701": "2.2",
+      "cours_google": 2,
+      "verite_terrain": {
+        "iocs": [
+          "Domaine usurpe par typosquatting : entrepise-corp.com (sans le 'r')",
+          "Reply-To externe : ceo.finance@gmail.com",
+          "SPF en echec (softfail)",
+          "Pression a l'urgence et au secret (ingenierie sociale)",
+          "Nouveau beneficiaire bancaire jamais utilise"
+        ],
+        "chronologie": [
+          "09h12 reception du courriel frauduleux par le comptable",
+          "09h20 reponse du comptable au fraudeur (aucun virement effectue)",
+          "09h35 trois autres employes signalent un message similaire"
+        ],
+        "bonnes_actions": [
+          "Ne pas virer ; verifier la demande par un canal independant (appel au PDG sur un numero connu)",
+          "Signaler le courriel au SOC et le mettre en quarantaine pour tous les destinataires",
+          "Bloquer le domaine usurpe et l'adresse Reply-To",
+          "Verifier si le compte de messagerie du comptable est compromis (regles de transfert, connexions)",
+          "Sensibiliser : rappeler la procedure de double validation des virements",
+          "Prevenir la banque si un virement avait ete lance"
+        ],
+        "faits_attendus": [
+          "Il s'agit d'une fraude au president (BEC) par usurpation de domaine, pas d'un piratage du compte du PDG",
+          "Le SPF softfail et le typosquatting sont les signaux techniques cles",
+          "La defense principale est la verification hors bande et la separation des taches"
+        ]
+      },
+      "modele_markdown": "# Rapport d'incident\n\n## Resume executif\n\n## Indicateurs de compromission (IOC)\n\n## Chronologie\n\n## Analyse de l'ingenierie sociale\n\n## Confinement\n\n## Recommandations\n\n## Sensibilisation\n"
+    },
+    {
+      "slug": "exfiltration-menace-interne",
+      "titre": "Exfiltration de donnees par un employe sur le depart",
+      "type": "incident",
+      "contexte": "Un ingenieur commercial a remis sa demission il y a 10 jours ; son dernier jour est demain. Le DLP alerte sur un volume anormal : 3,2 Go copies vers une cle USB depuis son poste a 22h47, puis 420 Mo televerses vers un compte Google Drive personnel. Les journaux montrent un acces a 1 900 fiches clients dans le CRM entre 22h10 et 22h50, alors que son activite habituelle tourne autour de 40 fiches par jour. La politique interne interdit le stockage amovible non chiffre et l'usage de clouds personnels.",
+      "objectif_sy0701": "4.2",
+      "cours_google": 5,
+      "verite_terrain": {
+        "iocs": [
+          "3,2 Go copies vers USB a 22h47 (hors horaires)",
+          "420 Mo vers Google Drive personnel",
+          "1 900 fiches CRM consultees en 40 min (vs ~40/jour)",
+          "Employe en periode de preavis (depart demain)"
+        ],
+        "chronologie": [
+          "22h10 debut d'acces massif au CRM",
+          "22h47 copie vers cle USB",
+          "22h50 fin des acces CRM",
+          "22h55 televersement vers Google Drive personnel"
+        ],
+        "bonnes_actions": [
+          "Preserver les preuves (journaux DLP, CRM, poste) avec chaine de possession avant toute action",
+          "Impliquer les RH et le service juridique avant de confronter la personne",
+          "Suspendre ou restreindre les acces de l'employe de maniere mesuree",
+          "Ne pas effacer la cle ni le poste : ce sont des preuves",
+          "Evaluer la nature des donnees (clients = possible notification RGPD/Loi 25)",
+          "Revoir les droits d'acces et les alertes DLP pour les departs futurs"
+        ],
+        "faits_attendus": [
+          "C'est une menace interne (exfiltration de donnees) et non une intrusion externe",
+          "La preservation des preuves et l'implication RH/juridique priment sur la confrontation",
+          "Le volume et l'horaire inhabituels sont les indicateurs cles"
+        ]
+      },
+      "modele_markdown": "# Rapport d'investigation\n\n## Resume executif\n\n## Faits observes\n\n## Chronologie\n\n## Donnees concernees\n\n## Preuves et chaine de possession\n\n## Actions recommandees\n\n## Volet RH / juridique\n"
+    },
+    {
+      "slug": "fuite-stockage-cloud-mal-configure",
+      "titre": "Fuite de donnees via un stockage objet mal configure",
+      "type": "incident",
+      "contexte": "Un chercheur en securite signale par courriel qu'un bucket de stockage objet nomme 'backups-prod-entreprise' est accessible publiquement en lecture, sans authentification. Il contient des exports de base de donnees (.sql) et des fichiers de configuration avec des cles API. L'URL circule depuis au moins 6 jours d'apres la date de derniere modification. Les journaux d'acces du bucket n'etaient pas actives. Le bucket avait ete cree a la hate lors d'une migration le mois dernier.",
+      "objectif_sy0701": "3.1",
+      "cours_google": 7,
+      "verite_terrain": {
+        "iocs": [
+          "Bucket 'backups-prod-entreprise' en acces public (lecture anonyme)",
+          "Exports .sql et fichiers de config avec cles API exposes",
+          "Journalisation des acces desactivee",
+          "Exposition depuis >= 6 jours"
+        ],
+        "chronologie": [
+          "Mois dernier : creation du bucket pendant une migration",
+          "J-6 : derniere modification des fichiers exposes",
+          "J0 09h00 : signalement par un chercheur externe"
+        ],
+        "bonnes_actions": [
+          "Retirer immediatement l'acces public du bucket (confinement)",
+          "Faire tourner (revoquer/regenerer) toutes les cles API exposees",
+          "Activer la journalisation et verifier qui a accede aux fichiers",
+          "Evaluer les donnees exposees et declencher la notification si donnees personnelles",
+          "Rechercher d'autres buckets mal configures (revue globale)",
+          "Ajouter un controle preventif : blocage de l'acces public par defaut, IaC revue"
+        ],
+        "faits_attendus": [
+          "Il s'agit d'une mauvaise configuration cloud, pas d'une intrusion : aucune faille exploitee",
+          "Les cles exposees doivent etre considerees comme compromises et revoquees",
+          "La prevention passe par 'secure by default' et la revue des configurations (IaC)"
+        ]
+      },
+      "modele_markdown": "# Rapport d'incident\n\n## Resume executif\n\n## Cause (mauvaise configuration)\n\n## Donnees et secrets exposes\n\n## Confinement et rotation des secrets\n\n## Chronologie\n\n## Recommandations preventives\n\n## Notification\n"
     }
   ]
 }
