@@ -6,6 +6,7 @@
   "scripts": {
     "validate-bank": "pnpm --filter @secprep/bank validate-bank",
     "seed": "pnpm --filter @secprep/bank seed",
+    "seed:generes": "pnpm --filter @secprep/generators seed",
     "create-user": "pnpm --filter @secprep/bank create-user",
     "db:generate": "pnpm --filter @secprep/db generate",
     "db:push": "pnpm --filter @secprep/db push",

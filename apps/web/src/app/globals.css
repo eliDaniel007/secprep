@@ -4,49 +4,53 @@
 
 /* ---- Tokens de couleur (RGB, consommes par Tailwind avec <alpha-value>) ---- */
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Theme sombre par defaut (ardoise + teal) */
-  --bg: 15 23 42; /* slate-900 */
-  --surface: 30 41 59; /* slate-800 */
-  --surface-2: 51 65 85; /* slate-700 */
-  --border: 51 65 85;
-  --text: 241 245 249; /* slate-100 */
-  --muted: 148 163 184; /* slate-400 */
-  --brand: 45 212 191; /* teal-400 */
-  --brand-fg: 2 44 41; /* texte sur fond brand */
-  --ok: 52 211 153; /* emerald-400 */
-  --warn: 251 191 36; /* amber-400 */
-  --danger: 248 113 113; /* red-400 */
-}
-
-:root[data-theme="light"] {
-  --bg: 248 250 252;
+  /* Theme clair minimaliste par defaut (papier + encre, un seul accent teal) */
+  --bg: 250 250 249; /* off-white */
   --surface: 255 255 255;
-  --surface-2: 241 245 249;
-  --border: 226 232 240;
-  --text: 15 23 42;
-  --muted: 100 116 139;
-  --brand: 13 148 136; /* teal-600 */
+  --surface-2: 245 245 243;
+  --border: 231 231 228; /* filets fins */
+  --text: 23 23 23; /* quasi-noir */
+  --muted: 124 124 122;
+  --brand: 17 94 89; /* teal 800, accent unique */
   --brand-fg: 255 255 255;
   --ok: 5 150 105;
-  --warn: 217 119 6;
-  --danger: 220 38 38;
+  --warn: 180 83 9;
+  --danger: 190 40 40;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: 248 250 252;
-    --surface: 255 255 255;
-    --surface-2: 241 245 249;
-    --border: 226 232 240;
-    --text: 15 23 42;
-    --muted: 100 116 139;
-    --brand: 13 148 136;
-    --brand-fg: 255 255 255;
-    --ok: 5 150 105;
-    --warn: 217 119 6;
-    --danger: 220 38 38;
+/* Variante sombre minimaliste (encre neutre, meme accent) */
+:root[data-theme="dark"] {
+  --bg: 23 23 23;
+  --surface: 32 32 32;
+  --surface-2: 40 40 40;
+  --border: 48 48 46;
+  --text: 245 245 244;
+  --muted: 150 150 146;
+  --brand: 45 212 191; /* teal-400 lisible sur fond sombre */
+  --brand-fg: 2 44 41;
+  --ok: 52 211 153;
+  --warn: 251 191 36;
+  --danger: 248 113 113;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: 23 23 23;
+    --surface: 32 32 32;
+    --surface-2: 40 40 40;
+    --border: 48 48 46;
+    --text: 245 245 244;
+    --muted: 150 150 146;
+    --brand: 45 212 191;
+    --brand-fg: 2 44 41;
+    --ok: 52 211 153;
+    --warn: 251 191 36;
+    --danger: 248 113 113;
+    color-scheme: dark;
   }
 }
 
@@ -64,10 +68,10 @@ body {
 /* ---- Composants utilitaires ---- */
 @layer components {
   .card {
-    @apply rounded-2xl border border-border bg-surface p-5 shadow-sm;
+    @apply rounded-xl border border-border bg-surface p-5;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2
            focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-50;
   }
@@ -75,17 +79,69 @@ body {
     @apply btn bg-brand text-brand-fg hover:brightness-110 active:brightness-95;
   }
   .btn-ghost {
-    @apply btn border border-border bg-surface-2 text-text hover:bg-surface;
+    @apply btn border border-border bg-surface text-text hover:bg-surface-2;
   }
   .input {
-    @apply w-full rounded-xl border border-border bg-surface-2 px-3.5 py-2.5 text-text
-           placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/40;
+    @apply w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-text
+           placeholder:text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30;
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-muted;
   }
   .chip {
-    @apply inline-flex items-center rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-muted;
+    @apply inline-flex items-center rounded-full border border-border bg-surface px-2.5 py-0.5 text-xs font-medium text-muted;
+  }
+  /* ---- Motifs minimalistes reutilisables ---- */
+  /* Groupe de tuiles-chiffres : un seul cadre borde, separateurs fins. */
+  .stat-group {
+    @apply grid overflow-hidden rounded-xl border border-border bg-surface;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @screen sm {
+    .stat-group {
+      grid-template-columns: repeat(var(--stat-cols, 4), minmax(0, 1fr));
+    }
+  }
+  .stat {
+    @apply border-b border-r border-border p-4;
+  }
+  .stat:nth-child(2n) {
+    @apply border-r-0;
+  }
+  @screen sm {
+    .stat {
+      @apply border-b-0;
+    }
+    .stat:nth-child(2n) {
+      @apply border-r;
+    }
+    .stat:last-child {
+      @apply border-r-0;
+    }
+  }
+  .stat-k {
+    @apply text-[1.65rem] font-bold leading-none tracking-tight;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-l {
+    @apply mt-1.5 text-xs text-muted;
+  }
+  /* Barre de progression fine (remplissage accent). */
+  .meter {
+    @apply h-1.5 overflow-hidden rounded-full bg-surface-2;
+  }
+  .meter > i {
+    @apply block h-full rounded-full bg-brand transition-all;
+  }
+  /* Liste bordee a lignes separees (domaines, listes de ressources). */
+  .rows {
+    @apply overflow-hidden rounded-xl border border-border bg-surface;
+  }
+  .rows > * + * {
+    @apply border-t border-border;
+  }
+  .row-item {
+    @apply flex items-center gap-4 px-4 py-3.5;
   }
 }
 

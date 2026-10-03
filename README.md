@@ -3,11 +3,12 @@
 Plateforme d'entrainement **CompTIA Security+ (SY0-701)** et de pratique SOC,
 en francais, pour reviser a deux. Livree **phase par phase**.
 
-> **Etat actuel : Phase 8 — Analyse de paquets.**
-> Visionneuse de paquets + 3 captures synthetiques reproductibles (balayage de
-> ports, tunnel DNS, televersement HTTP) avec verite terrain et exercices.
-> (Phases 1-7 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
-> loggen & SIEM, terminal sandbox.)
+> **Etat actuel : Phase 10 — Generateurs de questions.**
+> Gabarits parametriques a reponse calculee (ALE, CIDR, CHMOD, RPO, ports),
+> seed des brouillons, et file de relecture admin (brouillon -> valide) avec
+> statistiques par question.
+> (Phases 1-9 : fondations, quiz, chrono/examen, revision & duel, rapports + IA,
+> loggen & SIEM, terminal sandbox, analyse de paquets, capteur local.)
 
 ## Prerequis
 
@@ -182,6 +183,57 @@ clairement « Docker indisponible » — jamais d'execution non isolee.
 - Import de vrais fichiers .pcap : prevu dans une iteration ulterieure (parseur
   en bac a sable pour fichiers non fiables).
 
+## Capteur local (Phase 9)
+
+Un petit agent qui envoie de **vrais** journaux (origine `reel`) vers le SIEM,
+a cote des scenarios synthetiques (`simule`). **Confidentialite d'abord** :
+
+- **Consentement obligatoire** a l'enregistrement (`/capteurs`) : on confirme que
+  le reseau/la machine sont autorises. Chaque capteur a son **jeu de journaux
+  dedie**.
+- **Jeton** de 32 octets aleatoires, **affiche une seule fois**, **hache
+  (SHA-256) au repos** ; jamais stocke en clair. Revocation en un clic
+  (`/api/capteurs/[id]/revoke`).
+- **Ingestion** (`POST /api/ingest`, `Authorization: Bearer <jeton>`) :
+  **minimisation** stricte (liste blanche de metadonnees : IP, ports, user,
+  host, proto, result…), **jamais de charge utile** (`raw` tronque), lots
+  plafonnes (500 evts) et **limitation de debit** (20 lots/min/capteur).
+- **Journal d'audit** (`audit_capteur`) : enregistrement, envoi, revocation.
+- **`sensor/secprep_sensor.py`** : agent Python **zero dependance** (register
+  avec consentement, jeton chiffre au repos via HMAC-SHA256, lecture **passive**
+  et minimisante, export `.jsonl`, envoi HTTPS + plafond). `python
+  sensor/secprep_sensor.py --help`.
+
+> Les evenements d'un capteur apparaissent dans le SIEM marques **« reel »** et
+> alimentent la recherche, les tableaux de bord et le test de regles comme les
+> scenarios simules.
+
+## Generateurs de questions (Phase 10)
+
+- **`packages/generators`** : **gabarits** parametriques a **reponse calculee**
+  (logique pure, graine reproductible), au **format de la banque** (valides par
+  `questionSchema` de `@secprep/bank`) :
+  - **ALE** (perte annuelle attendue : `ALE = SLE x ARO`),
+  - **CIDR** (hotes utilisables : `2^(32-masque) - 2`),
+  - **CHMOD** (droits -> notation octale),
+  - **RPO** (perte de donnees vs RPO/RTO),
+  - **PORTS** (appariement protocole/port).
+- `genererLot(gabarit, graine, n)` produit N variantes uniques (ids
+  `G-<GAB>-<hash>`, dedup par id). Questions marquees `source: "genere"`,
+  `statut: "brouillon"`.
+- **Seed** : `pnpm seed:generes [N]` genere N variantes/gabarit (defaut 8) et les
+  ajoute en base (upsert par `id`, idempotent).
+- **File de relecture** (`/admin/relecture`, **admins uniquement**) : chaque
+  brouillon s'affiche (enonce, options, bonne reponse, explication) avec
+  **Valider** (passe `statut` a `valide`) ou **Rejeter** (supprime). Tant qu'une
+  question generee n'est pas validee, elle reste **hors quiz/examen**.
+- **Statistiques par question** (meme page) : nombre de tentatives, taux de
+  reussite et temps moyen, pour reperer les questions trop faciles/dures.
+
+> Garde-fou : la relecture ne touche qu'aux **brouillons generes** — jamais au
+> contenu officiel. Les questions generees n'entrent dans les quiz, examens et
+> duels **qu'apres validation humaine**.
+
 ### Bareme
 
 - Points de base : facile **10**, moyen **20**, difficile **30**.
@@ -220,9 +272,11 @@ secprep/
 │  ├─ loggen/         # Journaux synthetiques reproductibles + verite terrain
 │  ├─ siem-query/     # Langage de recherche + moteur (SIEM)
 │  ├─ labs/           # Labos guidés + validation automatique
-│  └─ packgen/        # Captures de paquets synthetiques + verite terrain
+│  ├─ packgen/        # Captures de paquets synthetiques + verite terrain
+│  └─ generators/     # Gabarits de questions a reponse calculee          (Phase 10)
 ├─ services/
 │  └─ sandbox/        # Orchestrateur de conteneur Docker isole (terminal)
+├─ sensor/            # Agent capteur local (Python, zero dependance)   (Phase 9)
 ├─ data/
 │  ├─ seed/           # banque_cas_securityplus.json (lot de depart)
 │  └─ lots/           # lots JSON additionnels (fusionnes au seed)
@@ -268,3 +322,30 @@ pnpm test
 
 Couvre : normalisation et similarite, toutes les regles de `validate-bank`,
 chaque type de question, et le chargement du lot de depart reel.
+
+## Deploiement (Vercel + Neon Postgres)
+
+L'application utilise **PostgreSQL** (hebergement **Neon**, gratuit) et se
+deploie sur **Vercel**.
+
+1. **Base Neon** : cree un projet sur https://neon.tech, recupere la
+   *connection string*. Renseigne dans `.env` :
+   - `DATABASE_URL` = URL **poolee** (hote avec `-pooler`, suffixe
+     `?sslmode=require&pgbouncer=true`) — utilisee par l'application ;
+   - `DIRECT_URL` = **meme URL sans `-pooler`** — utilisee par `prisma db push`.
+2. **Schema + donnees** (une fois) :
+   ```bash
+   corepack pnpm --filter @secprep/db run push       # cree les tables
+   corepack pnpm --filter @secprep/bank run seed      # 36 questions + scenarios
+   corepack pnpm --filter @secprep/generators run seed # questions generees (brouillons)
+   ```
+3. **Vercel** : importe le depot, **Root Directory = `apps/web`**, framework
+   Next.js. Variables d'environnement a definir : `DATABASE_URL`, `DIRECT_URL`,
+   `SESSION_PASSWORD` (>= 32 car.), et au besoin `ANTHROPIC_API_KEY`.
+   Le client Prisma est genere automatiquement au `postinstall` ; le build est
+   `next build`.
+4. Les nouveaux comptes se creent via la page **/inscription** (role etudiant).
+
+> Les **Labos Docker** (Phase 7) necessitent un hote Docker : ils ne tournent
+> pas sur Vercel (serverless) et affichent « Docker indisponible ». Le reste
+> (quiz, examen, SIEM, paquets, capteurs, relecture) fonctionne.

@@ -1,19 +1,20 @@
-// Schema Prisma — Phase 1 (Fondations)
-// SQLite pour demarrer. Les valeurs "enum" sont stockees en String et
-// contraintes par Zod (@secprep/bank), ce qui garde le schema portable
-// vers PostgreSQL plus tard.
+// Schema Prisma — PostgreSQL (deploiement Vercel + Neon).
+// Les valeurs "enum" sont stockees en String et contraintes par Zod
+// (@secprep/bank). Tout le schema n'utilise que String/Int/Boolean/DateTime,
+// donc il est pleinement compatible Postgres.
 //
-// Les tables des phases ulterieures (revision_espacee, session_examen, duel,
-// signalement_question, rapport*, scenario_lab, enquete, capteur, ...) seront
-// ajoutees a leur phase respective via des migrations incrementales.
+// DATABASE_URL : connexion applicative (pool Neon, pour le runtime serverless).
+// DIRECT_URL   : connexion directe (non poolee) pour `prisma db push`/migrate.
+// En local, les deux peuvent pointer vers la meme base Neon.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Utilisateur {
@@ -34,6 +35,7 @@ model Utilisateur {
   enquetes     Enquete[]
   sessionsSandbox SessionSandbox[]
   progressionsLabo ProgressionLabo[]
+  capteurs        Capteur[]
 
   @@map("utilisateur")
 }
@@ -250,6 +252,7 @@ model JeuJournaux {
 
   evenements Evenement[]
   enquetes   Enquete[]
+  capteur    Capteur?
 
   @@map("jeu_journaux")
 }
@@ -316,6 +319,40 @@ model Capture {
   creeLe        DateTime @default(now())
 
   @@map("capture")
+}
+
+// Capteur local (Phase 9). Jeton haché au repos, revocable. Chaque capteur a son
+// propre jeu de journaux (origine "reel").
+model Capteur {
+  id            String    @id @default(cuid())
+  utilisateurId String
+  nom           String
+  tokenHash     String    @unique // sha256 du jeton (haut en entropie)
+  jeuId         String    @unique
+  actif         Boolean   @default(true)
+  creeLe        DateTime  @default(now())
+  revokeLe      DateTime?
+
+  utilisateur Utilisateur    @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  jeu         JeuJournaux    @relation(fields: [jeuId], references: [id], onDelete: Cascade)
+  audits      AuditCapteur[]
+
+  @@index([utilisateurId])
+  @@map("capteur")
+}
+
+// Journal d'audit de tout ce qu'un capteur fait (enregistrement, envoi, revocation).
+model AuditCapteur {
+  id        String   @id @default(cuid())
+  capteurId String
+  action    String // register | ingest | revoke
+  details   String   @default("")
+  creeLe    DateTime @default(now())
+
+  capteur Capteur @relation(fields: [capteurId], references: [id], onDelete: Cascade)
+
+  @@index([capteurId])
+  @@map("audit_capteur")
 }
 
 model ProgressionLabo {

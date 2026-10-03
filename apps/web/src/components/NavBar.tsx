@@ -11,12 +11,16 @@ const LIENS = [
   { href: "/siem", label: "SIEM" },
   { href: "/paquets", label: "Paquets" },
   { href: "/labs", label: "Labos" },
+  { href: "/capteurs", label: "Capteurs" },
   { href: "/rapports", label: "Rapports" },
 ];
 
-export function NavBar({ nom }: { nom: string }) {
+const LIENS_ADMIN = [{ href: "/admin/relecture", label: "Relecture" }];
+
+export function NavBar({ nom, role }: { nom: string; role?: string }) {
   const pathname = usePathname();
   const router = useRouter();
+  const liens = role === "admin" ? [...LIENS, ...LIENS_ADMIN] : LIENS;
 
   async function deconnexion() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -35,7 +39,7 @@ export function NavBar({ nom }: { nom: string }) {
             SecPrep
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
-            {LIENS.map((l) => {
+            {liens.map((l) => {
               const actif = pathname === l.href;
               return (
                 <Link

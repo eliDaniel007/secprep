@@ -59,8 +59,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Cartes de synthese */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat libelle="Questions dispo." valeur={String(tb.totalQuestions)} />
+      <div className="stat-group">
+        <Stat libelle="Questions dispo." valeur={String(tb.totalQuestions)} accent />
         <Stat libelle="Tentatives" valeur={String(tb.totalTentatives)} />
         <Stat libelle="Reussies" valeur={String(tb.totalReussies)} />
         <Stat
@@ -72,35 +72,30 @@ export default async function DashboardPage() {
       {/* Progression par domaine */}
       <section>
         <h2 className="mb-3 text-lg font-semibold">Progression par domaine</h2>
-        <div className="space-y-3">
+        <div className="rows">
           {tb.parDomaine.map((d) => {
             const meta = DOMAINES[d.domaine]!;
             return (
-              <div key={d.domaine} className="card">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="chip">D{d.domaine}</span>
-                      <span className="font-medium">{meta.court}</span>
-                      <span className="text-xs text-muted">({meta.part} %)</span>
-                    </div>
-                    <p className="mt-1 text-sm text-muted">
-                      {d.tentatives === 0
-                        ? `${d.questionsDisponibles} questions a decouvrir`
-                        : `${d.reussies}/${d.tentatives} reussies · ${d.questionsDisponibles} dispo.`}
-                    </p>
+              <div key={d.domaine} className="row-item">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="chip">D{d.domaine}</span>
+                    <span className="font-medium">{meta.court}</span>
+                    <span className="text-xs text-muted">({meta.part} %)</span>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xl font-bold">
-                      {d.tentatives === 0 ? "—" : pct(d.tauxReussite)}
-                    </div>
+                  <p className="mt-1 text-sm text-muted">
+                    {d.tentatives === 0
+                      ? `${d.questionsDisponibles} questions a decouvrir`
+                      : `${d.reussies}/${d.tentatives} reussies · ${d.questionsDisponibles} dispo.`}
+                  </p>
+                </div>
+                <div className="hidden w-32 sm:block">
+                  <div className="meter">
+                    <i style={{ width: `${Math.round(d.tauxReussite * 100)}%` }} />
                   </div>
                 </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-2">
-                  <div
-                    className="h-full rounded-full bg-brand transition-all"
-                    style={{ width: `${Math.round(d.tauxReussite * 100)}%` }}
-                  />
+                <div className="w-12 text-right text-sm font-semibold tabular-nums">
+                  {d.tentatives === 0 ? "—" : pct(d.tauxReussite)}
                 </div>
               </div>
             );
@@ -132,11 +127,19 @@ export default async function DashboardPage() {
   );
 }
 
-function Stat({ libelle, valeur }: { libelle: string; valeur: string }) {
+function Stat({
+  libelle,
+  valeur,
+  accent = false,
+}: {
+  libelle: string;
+  valeur: string;
+  accent?: boolean;
+}) {
   return (
-    <div className="card">
-      <div className="text-2xl font-bold">{valeur}</div>
-      <div className="mt-1 text-xs text-muted">{libelle}</div>
+    <div className="stat">
+      <div className={`stat-k${accent ? " text-brand" : ""}`}>{valeur}</div>
+      <div className="stat-l">{libelle}</div>
     </div>
   );
 }

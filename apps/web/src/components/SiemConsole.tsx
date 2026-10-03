@@ -338,7 +338,7 @@ function TableauBord({ evenements }: { evenements: EvenementClient[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="stat-group" style={{ ["--stat-cols" as string]: 3 }}>
         <Carte libelle="Evenements" valeur={stats.total} />
         <Carte libelle="Echecs d'auth" valeur={stats.nbEchecs} />
         <Carte libelle="Succes depuis IP externe" valeur={stats.succesExterne} accent />
@@ -359,9 +359,9 @@ function TableauBord({ evenements }: { evenements: EvenementClient[] }) {
 
 function Carte({ libelle, valeur, accent }: { libelle: string; valeur: number; accent?: boolean }) {
   return (
-    <div className="card">
-      <div className={`text-2xl font-bold ${accent && valeur > 0 ? "text-danger" : ""}`}>{valeur}</div>
-      <div className="mt-1 text-xs text-muted">{libelle}</div>
+    <div className="stat">
+      <div className={`stat-k ${accent && valeur > 0 ? "text-danger" : ""}`}>{valeur}</div>
+      <div className="stat-l">{libelle}</div>
     </div>
   );
 }

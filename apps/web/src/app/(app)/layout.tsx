@@ -9,7 +9,7 @@ export default async function AppLayout({
   const u = await exigerUtilisateur();
   return (
     <div className="min-h-screen">
-      <NavBar nom={u.nom} />
+      <NavBar nom={u.nom} role={u.role} />
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>
   );
