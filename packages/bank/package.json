@@ -11,6 +11,7 @@
   },
   "scripts": {
     "validate-bank": "tsx src/cli/validate-bank.ts",
+    "import-lot": "dotenv -e ../../.env -- tsx src/cli/import-lot.ts",
     "seed": "dotenv -e ../../.env -- tsx src/cli/seed.ts",
     "create-user": "dotenv -e ../../.env -- tsx src/cli/create-user.ts",
     "test": "vitest run",
